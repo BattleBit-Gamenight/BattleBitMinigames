@@ -1,0 +1,48 @@
+name: Build and Publish Artifacts
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+    env: 
+      DOTNET_VERSION: '6.0.x'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup .NET
+        if: matrix.os == 'ubuntu-latest'
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Setup .NET for Windows
+        if: matrix.os == 'windows-latest'
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+          dotnet-install-dir: 'C:\Program Files\dotnet'
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Publish Artifact
+        if: success()
+        uses: actions/upload-artifact@v2
+        with:
+          name: BattleBitApi
+          path: ./BattleBitApi/bin/Release/net6.0/
