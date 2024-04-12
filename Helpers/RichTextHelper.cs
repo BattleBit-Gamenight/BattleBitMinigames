@@ -117,7 +117,7 @@ public class RichTextHelper
 
     public static string Size(int? size = null)
     {
-        return size is null ? "</size>" : $"<size={size}>";
+        return size is null ? "</size>" : $"<size={size}%>";
     }
     
     public static string Subscript(bool subscript) => subscript ? "<sub>" : "</sub>";

@@ -2,7 +2,7 @@
 using BattleBitApi.Enums;
 
 namespace BattleBitApi.Api;
-public abstract class BattleBitApiPlayer : Player<BattleBitApiPlayer>
+public class BattleBitApiPlayer : Player<BattleBitApiPlayer>
 {
     public bool Debug = false;
     
