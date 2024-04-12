@@ -437,7 +437,7 @@ public class HideAndSeekGamemode : Event
             player.Modifications.FallDamageMultiplier = 0.0f;
             player.Modifications.ReceiveDamageMultiplier = 100.0f;
             player.Modifications.GiveDamageMultiplier = 0.0f;
-            player.Modifications.RunningSpeedMultiplier = 0.6f;
+            player.Modifications.RunningSpeedMultiplier = 1.0f;
             player.Modifications.JumpHeightMultiplier = 1.0f;
             player.Modifications.CanSuicide = false;
             player.Modifications.HideOnMap = true;
