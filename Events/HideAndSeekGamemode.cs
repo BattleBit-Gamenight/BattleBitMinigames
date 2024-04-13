@@ -9,9 +9,32 @@ namespace BattleBitApi.Events;
 
 public class HideAndSeekGamemode : Event
 {
-    private string MiniGameState { get; set; } = "waiting";         
-    Random _random = new();
-    public static ConcurrentDictionary<ulong, HideAndSeekPlayerData> HideAndSeekers = new ConcurrentDictionary<ulong, HideAndSeekPlayerData>();
+    // GAMEMODE SETTINGS
+    private int RequiredPlayerCountToStart { get; set; } = 4;
+    private int HideTimeDuration { get; set; } = 180;
+    
+    // HIDER SETTINGS
+    private float HiderRunSpeedMultiplierDuringCountdown { get; set; } = 2.0f;
+    private float HiderRunSpeedMultiplierDuringGame { get; set; } = 0.6f;
+    private float HiderJumpHeightMultiplierDuringCountdown { get; set; } = 2.0f;
+    private float HiderJumpHeightMultiplierDuringGame { get; set; } = 1.0f;
+    private float HiderFallDamageMultiplier { get; set; } = 0.0f;
+    private float HiderGiveDamageMultiplier { get; set; } = 0.0f;
+    private float HiderReceiveDamageMultiplier { get; set; } = 100.0f;
+    
+    // SEEKER SETTINGS
+    private float SeekerRunSpeedMultiplier { get; set; } = 1.5f;
+    private float SeekerJumpHeightMultiplier { get; set; } = 1.5f;
+    private float SeekerFallDamageMultiplier { get; set; } = 0.0f;
+    private float SeekerGiveDamageMultiplier { get; set; } = 100.0f;
+    private float SeekerReceiveDamageMultiplier { get; set; } = 0.0f;
+    
+    // DO NOT CHANGE THESE VALUES
+    private string MiniGameState { get; set; } = "waiting";
+    
+    // Game Logic
+    readonly Random _random = new();
+    private static ConcurrentDictionary<ulong, HideAndSeekPlayerData> HideAndSeekers = new ConcurrentDictionary<ulong, HideAndSeekPlayerData>();
 
     private async void StartPlayerPositionChecker()
     {
@@ -64,12 +87,12 @@ public class HideAndSeekGamemode : Event
 
     private async void StartWaitingForPlayersMessage()
     {
-        while (MiniGameState == "waiting" && Server.CurrentPlayerCount < 4)
+        while (MiniGameState == "waiting" && Server.CurrentPlayerCount < RequiredPlayerCountToStart)
         {
             try
             {
                 var message = new StringBuilder();
-                var playersNeeded = 4 - Server.CurrentPlayerCount;
+                var playersNeeded = RequiredPlayerCountToStart - Server.CurrentPlayerCount;
                 message.AppendLine($"{RichTextHelper.Size(150)}BattleBit Hide and Seek!{RichTextHelper.Size(100)}");
                 message.AppendLine("Waiting for players to join! Need " + playersNeeded + " more players to start!");
                 Server.AnnounceShort(message.ToString());
@@ -158,7 +181,7 @@ public class HideAndSeekGamemode : Event
                             message.AppendLine(
                                 $"{RichTextHelper.Size(140)}{RichTextHelper.FromColorName("Orange")}Waiting for players to join!{RichTextHelper.Size(100)}");
                             message.AppendLine(
-                                $"{RichTextHelper.FromColorName("Snow")}Players needed to start: {4 - Server.CurrentPlayerCount}");
+                                $"{RichTextHelper.FromColorName("Snow")}Players needed to start: {RequiredPlayerCountToStart - Server.CurrentPlayerCount}");
                             break;
                     }
 
@@ -211,6 +234,11 @@ public class HideAndSeekGamemode : Event
                     await Task.Delay(1000);
                     countdown--;
 
+                    foreach (var player in Server.AllPlayers)
+                    {
+                        PlayerHelpers.KillPlayerInVehicle(player, "Vehicles are not allowed until the game starts!");
+                    }
+
                     if (MiniGameState != "selectingseekers" || MiniGameState == "ending") return;
                 }
                 catch (Exception e)
@@ -241,12 +269,12 @@ public class HideAndSeekGamemode : Event
             {
                 try
                 {
-                    Program.Logger.Info(seeker.Name); // Log the seeker's name
-                    var playerData = GetHideAndSeekPlayerData(seeker); // Get the player data
-                    playerData.IsSeeking = true; // Mark player as seeking
-                    playerData.Player.Modifications.CanDeploy = false; // Player cannot deploy
-                    playerData.Player.Modifications.CanSpectate = false; // Player cannot spectate
-                    playerData.Player.ChangeTeam(Team.TeamA); // Change team to TeamA
+                    Program.Logger.Info(seeker.Name);
+                    var playerData = GetHideAndSeekPlayerData(seeker);
+                    playerData.IsSeeking = true;
+                    playerData.Player.Modifications.CanDeploy = false;
+                    playerData.Player.Modifications.CanSpectate = false;
+                    playerData.Player.ChangeTeam(Team.TeamA);
                 }
                 catch (Exception e)
                 {
@@ -264,8 +292,8 @@ public class HideAndSeekGamemode : Event
                 {
                     hider.IsSeeking = false;
                     hider.Player.Modifications.CanDeploy = true;
-                    hider.Player.Modifications.RunningSpeedMultiplier = 2.0f;
-                    hider.Player.Modifications.JumpHeightMultiplier = 2.0f;
+                    hider.Player.Modifications.RunningSpeedMultiplier = HiderRunSpeedMultiplierDuringCountdown;
+                    hider.Player.Modifications.JumpHeightMultiplier = HiderJumpHeightMultiplierDuringCountdown;
                     hider.Player.ChangeTeam(Team.TeamB);
                 }
                 catch (Exception e)
@@ -274,11 +302,8 @@ public class HideAndSeekGamemode : Event
                 }
             }
             
-            Program.Logger.Info("Seekers: " + seekers.Count);
-            Program.Logger.Info("Hiders: " + hiders.Count);
-            
             // Create countdown timer that counts down from 3 minutes and update the announcement every 1 second with the remaining time
-            countdown = 180;
+            countdown = HideTimeDuration;
             int hidersCount;
             while (countdown > 0)
             {
@@ -288,6 +313,24 @@ public class HideAndSeekGamemode : Event
                         $"Hide and Seek will start in {FormattingHelper.GetFormattedTimeFromSeconds(countdown)}!{RichTextHelper.NewLine()}Seekers will be able to deploy once the game starts!");
                     await Task.Delay(1000);
                     countdown--;
+                    
+                    foreach (var player in Server.AllPlayers)
+                    {
+                        try
+                        {
+                            var playerData = GetHideAndSeekPlayerData(player);
+                            if (playerData.IsSeeking)
+                            {
+                                PlayerHelpers.KillPlayerInVehicle(player,
+                                    "Vehicles are not allowed until the game starts!");
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            Program.Logger.Error(e.Message);
+                        }
+                    }
+                    
                     if (MiniGameState != "countingdown" && MiniGameState != "ending") return;
                 }
                 catch (Exception e)
@@ -302,7 +345,7 @@ public class HideAndSeekGamemode : Event
             {
                 try
                 {
-                    hider.Player.Modifications.RunningSpeedMultiplier = 0.6f;
+                    hider.Player.Modifications.RunningSpeedMultiplier = HiderRunSpeedMultiplierDuringGame;
                 }
                 catch (Exception e)
                 {
@@ -412,17 +455,19 @@ public class HideAndSeekGamemode : Event
         {
             request.Loadout = new PlayerLoadout();
             request.Loadout.HeavyGadget = Gadgets.SledgeHammer;
+            request.Loadout.LightGadget = Gadgets.AirDrone;
+            request.Loadout.Throwable = Gadgets.AntiPersonnelMine;
             request.Wearings.Head = "ANV2_Universal_UniC_Helmet_00_Red_N";
             request.Wearings.Chest = "ANV2_Universal_UniC_Armor_00_Red_N";
             request.Wearings.Belt = "ANV2_Universal_UniC_Belt_00_Red_S";
             request.Wearings.Backbag = "ANV2_Universal_UniC_Backpack_00_Red_N";
             request.Wearings.Uniform = "ANY_NU_Uniform_UniCRed_00";
             
-            player.Modifications.FallDamageMultiplier = 0.0f;
-            player.Modifications.ReceiveDamageMultiplier = 0.0f;
-            player.Modifications.GiveDamageMultiplier = 100.0f;
-            player.Modifications.RunningSpeedMultiplier = 1.5f;
-            player.Modifications.JumpHeightMultiplier = 1.5f;
+            player.Modifications.FallDamageMultiplier = SeekerFallDamageMultiplier;
+            player.Modifications.ReceiveDamageMultiplier = SeekerReceiveDamageMultiplier;
+            player.Modifications.GiveDamageMultiplier = SeekerGiveDamageMultiplier;
+            player.Modifications.RunningSpeedMultiplier = SeekerRunSpeedMultiplier;
+            player.Modifications.JumpHeightMultiplier = SeekerJumpHeightMultiplier;
             player.Modifications.CanSuicide = true;
             player.Modifications.HideOnMap = false;
             player.Modifications.IsExposedOnMap = true;
@@ -434,11 +479,11 @@ public class HideAndSeekGamemode : Event
             request.Loadout = new PlayerLoadout();
             request.Loadout.LightGadget = Gadgets.BinoSoflam;
             request.Loadout.Throwable = Gadgets.SmokeGrenadeWhite;
-            player.Modifications.FallDamageMultiplier = 0.0f;
-            player.Modifications.ReceiveDamageMultiplier = 100.0f;
-            player.Modifications.GiveDamageMultiplier = 0.0f;
-            player.Modifications.RunningSpeedMultiplier = 1.0f;
-            player.Modifications.JumpHeightMultiplier = 1.0f;
+            player.Modifications.FallDamageMultiplier = HiderFallDamageMultiplier;
+            player.Modifications.ReceiveDamageMultiplier = HiderReceiveDamageMultiplier;
+            player.Modifications.GiveDamageMultiplier = HiderGiveDamageMultiplier;
+            player.Modifications.RunningSpeedMultiplier = HiderRunSpeedMultiplierDuringGame;
+            player.Modifications.JumpHeightMultiplier = HiderJumpHeightMultiplierDuringGame;
             player.Modifications.CanSuicide = false;
             player.Modifications.HideOnMap = true;
             player.Modifications.IsExposedOnMap = false;
@@ -521,11 +566,12 @@ public class HideAndSeekGamemode : Event
             "Old_Oildunes"
         );
         Server.GamemodeRotation.SetRotation("INFCONQ");
+        Server.ExecuteCommand("setsize ultra");
+        Server.ExecuteCommand("setspeedhackdetection false");
 
         Task.Run(StartInfoMessage);
         Task.Run(StartWaitingForPlayersMessage);
-        Server.ExecuteCommand("setspeedhackdetection false");
-        Server.RoundSettings.PlayersToStart = 1;
+        Server.RoundSettings.PlayersToStart = RequiredPlayerCountToStart;
         
         return Task.CompletedTask;
     }
