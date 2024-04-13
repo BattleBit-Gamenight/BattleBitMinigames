@@ -36,7 +36,7 @@ public class HideAndSeekGamemode : Event
     readonly Random _random = new();
     private static ConcurrentDictionary<ulong, HideAndSeekPlayerData> HideAndSeekers = new ConcurrentDictionary<ulong, HideAndSeekPlayerData>();
 
-    private async void StartPlayerPositionChecker()
+    private async void StartPlayerSeekerMeter()
     {
         // Every 1 second check if a seeker is near a hider
         while (MiniGameState == "running")
@@ -66,11 +66,12 @@ public class HideAndSeekGamemode : Event
                     // Update the SeekingMeter based on the closest hider found
                     seeker.SeekingMeter = closestDistance switch
                     {
-                        <= 25 => $"{RichTextHelper.FromColorName("IndianRed")}SPICY{RichTextHelper.FromColorName("Snow")}",
-                        <= 50 => $"{RichTextHelper.FromColorName("Red")}HOT{RichTextHelper.FromColorName("Snow")}",
-                        <= 75 => $"{RichTextHelper.FromColorName("Orange")}WARM{RichTextHelper.FromColorName("Snow")}",
-                        <= 150 => $"{RichTextHelper.FromColorName("Blue")}COLD{RichTextHelper.FromColorName("Snow")}",
-                        _ => $"{RichTextHelper.FromColorName("SlateBlue")}FREEZING{RichTextHelper.FromColorName("Snow")}"
+                        <= 25 => $"{RichTextHelper.FromColorName("IndianRed")}SPICY{RichTextHelper.FromColorName("Snow")} (0-25m)",
+                        <= 50 => $"{RichTextHelper.FromColorName("Red")}HOT{RichTextHelper.FromColorName("Snow")} (25-50m)",
+                        <= 75 => $"{RichTextHelper.FromColorName("Orange")}WARM{RichTextHelper.FromColorName("Snow")} (50-75m)",
+                        <= 150 => $"{RichTextHelper.FromColorName("Blue")}COLD{RichTextHelper.FromColorName("Snow")} (75-150m)",
+                        <= 300 => $"{RichTextHelper.FromColorName("Blue")}FREEZING{RichTextHelper.FromColorName("Snow")} (150-300m)",
+                        _ => $"{RichTextHelper.FromColorName("Violet")}NO LIFE DETECTED{RichTextHelper.FromColorName("Snow")} (300m+)"
                     };
 
                     await Task.Delay(5);
@@ -356,7 +357,7 @@ public class HideAndSeekGamemode : Event
             Server.AnnounceShort($"Hide and Seek Started and seekers can now spawn in!");
             
             MiniGameState = "running";
-            await Task.Run(StartPlayerPositionChecker);
+            await Task.Run(StartPlayerSeekerMeter);
             
             // Get filter for all seekers
             var seekersFilter = HideAndSeekers.Values.Where(player => player.IsSeeking).Select(player => player.Player).ToList();
