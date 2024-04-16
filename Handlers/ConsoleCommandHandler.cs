@@ -1,6 +1,6 @@
-﻿using BattleBitApi.ConsoleCommands;
+﻿using BattleBitMinigames.ConsoleCommands;
 
-namespace BattleBitApi.Handlers;
+namespace BattleBitMinigames.Handlers;
 
 public class ConsoleCommandHandler
 {

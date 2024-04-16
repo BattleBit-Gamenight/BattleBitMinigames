@@ -1,6 +1,6 @@
-﻿using BattleBitApi.Api;
+﻿using BattleBitMinigames.Api;
 
-namespace BattleBitApi.Helpers;
+namespace BattleBitMinigames.Helpers;
 
 public class RoleHelper
 {

@@ -1,6 +1,6 @@
-﻿using BattleBitApi.Helpers;
+﻿using BattleBitMinigames.Helpers;
 
-namespace BattleBitApi.ConsoleCommands;
+namespace BattleBitMinigames.ConsoleCommands;
     
 public class SendMessage : ConsoleCommand
 {

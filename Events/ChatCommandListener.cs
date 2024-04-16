@@ -1,8 +1,8 @@
 ﻿using BattleBitAPI.Common;
-using BattleBitApi.Api;
-using BattleBitApi.Handlers;
+using BattleBitMinigames.Api;
+using BattleBitMinigames.Handlers;
 
-namespace BattleBitApi.Events;
+namespace BattleBitMinigames.Events;
 
 public class ChatCommandListener : Event
 {

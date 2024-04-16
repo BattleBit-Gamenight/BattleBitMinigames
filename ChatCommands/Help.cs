@@ -1,8 +1,7 @@
 ﻿using System.Text;
-using BattleBitApi.Api;
-using BattleBitApi.Enums;
+using BattleBitMinigames.Enums;
 
-namespace BattleBitApi.ChatCommands;
+namespace BattleBitMinigames.ChatCommands;
 
 public class Help : ChatCommand
 {

@@ -5,13 +5,13 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using BattleBitAPI.Common;
 using BattleBitAPI.Server;
-using BattleBitApi.Api;
-using BattleBitApi.Handlers;
+using BattleBitMinigames.Api;
+using BattleBitMinigames.Handlers;
 using log4net;
 using log4net.Config;
 using Microsoft.Extensions.Configuration;
 
-namespace BattleBitApi;
+namespace BattleBitMinigames;
 
 internal class Program
 {

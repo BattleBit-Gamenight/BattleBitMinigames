@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace BattleBitApi.Helpers;
+namespace BattleBitMinigames.Helpers;
 
 public class FormattingHelper
 {

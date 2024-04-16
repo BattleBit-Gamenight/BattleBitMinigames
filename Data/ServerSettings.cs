@@ -1,4 +1,4 @@
-﻿namespace BattleBitApi.Data;
+﻿namespace BattleBitMinigames.Data;
 
 public class ServerSettings
 {

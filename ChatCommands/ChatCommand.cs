@@ -1,8 +1,8 @@
-﻿using BattleBitApi.Api;
-using BattleBitApi.Enums;
+﻿using BattleBitMinigames.Api;
+using BattleBitMinigames.Enums;
 using log4net;
 
-namespace BattleBitApi.ChatCommands;
+namespace BattleBitMinigames.ChatCommands;
 
 public class ChatCommand : Attribute
 {

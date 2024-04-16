@@ -1,7 +1,6 @@
-﻿using BattleBitAPI.Common;
-using BattleBitApi.Api;
+﻿using BattleBitMinigames.Api;
 
-namespace BattleBitApi.Events;
+namespace BattleBitMinigames.Events;
 
 public class ServerSettings : Event
 {

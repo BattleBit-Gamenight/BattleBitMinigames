@@ -1,4 +1,4 @@
-namespace BattleBitApi.Enums;
+namespace BattleBitMinigames.Enums;
 
 [Flags]
 public enum PlayerRoles

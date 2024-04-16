@@ -1,15 +1,14 @@
-﻿using BattleBitApi.Api;
+﻿using BattleBitMinigames.Api;
 
-namespace BattleBitApi.Helpers;
+namespace BattleBitMinigames.Helpers;
 
 public class PlayerHelpers
 {
-    public static void KillPlayerInVehicle(BattleBitApiPlayer player, string reason)
+    public static void KillPlayerInVehicle(BattleBitApiPlayer player, string messageToPlayer)
     {
-        if (player.InVehicle == false)
-            return;
+        if (!player.InVehicle) return;
 
         player.Kill();
-        player.SayToChat(reason);
+        player.SayToChat(messageToPlayer);
     }
 }

@@ -1,7 +1,7 @@
-﻿using BattleBitApi.Enums;
-using BattleBitApi.Helpers;
+﻿using BattleBitMinigames.Enums;
+using BattleBitMinigames.Helpers;
 
-namespace BattleBitApi.ChatCommands;
+namespace BattleBitMinigames.ChatCommands;
 
 public class SendAnnouncement : ChatCommand
 {

@@ -1,7 +1,7 @@
 ﻿using System.Numerics;
-using BattleBitApi.Enums;
+using BattleBitMinigames.Enums;
 
-namespace BattleBitApi.ChatCommands;
+namespace BattleBitMinigames.ChatCommands;
 
 public class TeleportCommand : ChatCommand
 {

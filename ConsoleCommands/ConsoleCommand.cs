@@ -1,7 +1,7 @@
-﻿using BattleBitApi.Api;
+﻿using BattleBitMinigames.Api;
 using log4net;
 
-namespace BattleBitApi.ConsoleCommands;
+namespace BattleBitMinigames.ConsoleCommands;
 
 public class ConsoleCommand : Attribute
 {

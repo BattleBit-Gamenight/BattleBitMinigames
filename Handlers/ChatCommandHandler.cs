@@ -1,7 +1,7 @@
-﻿using BattleBitApi.Api;
-using BattleBitApi.ChatCommands;
+﻿using BattleBitMinigames.Api;
+using BattleBitMinigames.ChatCommands;
 
-namespace BattleBitApi.Handlers;
+namespace BattleBitMinigames.Handlers;
 
 public class ChatCommandHandler
 {

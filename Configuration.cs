@@ -3,7 +3,7 @@ using System.Net;
 using System.Text.Json.Serialization;
 using BattleBitAPI.Common;
 
-namespace BattleBitApi;
+namespace BattleBitMinigames;
 
 public class Configuration
 {

@@ -1,4 +1,4 @@
-﻿namespace BattleBitApi.ChatCommands;
+﻿namespace BattleBitMinigames.ChatCommands;
 
 public class ChatCommandList
 {

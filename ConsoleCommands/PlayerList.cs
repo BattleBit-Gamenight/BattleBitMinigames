@@ -1,6 +1,6 @@
-﻿using BattleBitApi.Api;
+﻿using BattleBitMinigames.Api;
 
-namespace BattleBitApi.ConsoleCommands;
+namespace BattleBitMinigames.ConsoleCommands;
 
 public class PlayerList : ConsoleCommand
 {

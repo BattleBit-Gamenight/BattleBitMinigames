@@ -1,8 +1,8 @@
 using BattleBitAPI.Common;
-using BattleBitApi.Api;
-using BattleBitApi.Helpers;
+using BattleBitMinigames.Api;
+using BattleBitMinigames.Helpers;
 
-namespace BattleBitApi.Events;
+namespace BattleBitMinigames.Events;
 
 public class PlayerRoles : Event
 {

@@ -1,11 +1,11 @@
 ﻿using System.Collections.Concurrent;
 using System.Text;
 using BattleBitAPI.Common;
-using BattleBitApi.Api;
-using BattleBitApi.Helpers;
 using BattleBitAPI.Server;
+using BattleBitMinigames.Api;
+using BattleBitMinigames.Helpers;
 
-namespace BattleBitApi.Events;
+namespace BattleBitMinigames.Events;
 
 public class HideAndSeekGamemode : Event
 {

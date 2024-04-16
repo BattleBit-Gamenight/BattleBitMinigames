@@ -1,7 +1,7 @@
 ﻿using BattleBitAPI;
-using BattleBitApi.Enums;
+using BattleBitMinigames.Enums;
 
-namespace BattleBitApi.Api;
+namespace BattleBitMinigames.Api;
 public class BattleBitApiPlayer : Player<BattleBitApiPlayer>
 {
     public bool Debug = false;

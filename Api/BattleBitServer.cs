@@ -1,11 +1,11 @@
 ﻿using BattleBitAPI.Common;
-using BattleBitApi.Events;
 using BattleBitAPI.Server;
-using PlayerRoles = BattleBitApi.Events.PlayerRoles;
+using BattleBitMinigames.Events;
+using PlayerRoles = BattleBitMinigames.Events.PlayerRoles;
 using PlayerStats = BattleBitAPI.Common.PlayerStats;
-using ServerSettings = BattleBitApi.Events.ServerSettings;
+using ServerSettings = BattleBitMinigames.Events.ServerSettings;
 
-namespace BattleBitApi.Api;
+namespace BattleBitMinigames.Api;
 
 public class BattleBitServer : GameServer<BattleBitApiPlayer>
 {
@@ -16,7 +16,8 @@ public class BattleBitServer : GameServer<BattleBitApiPlayer>
         AddEvent(new ServerSettings(), this);
         AddEvent(new PlayerRoles(), this);
         AddEvent(new ChatCommandListener(), this);
-        AddEvent(new HideAndSeekGamemode(), this);
+        AddEvent(new RegionManager(), this);
+        // AddEvent(new HideAndSeekGamemode(), this);
     }
 
     private void AddEvent(Event @event, BattleBitServer server)

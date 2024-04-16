@@ -1,4 +1,4 @@
-﻿namespace BattleBitApi.ConsoleCommands;
+﻿namespace BattleBitMinigames.ConsoleCommands;
 
 public class ConsoleCommandList
 {

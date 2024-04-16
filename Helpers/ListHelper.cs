@@ -1,4 +1,4 @@
-﻿namespace BattleBitApi.Helpers;
+﻿namespace BattleBitMinigames.Helpers;
 
 public class ListHelper
 {
