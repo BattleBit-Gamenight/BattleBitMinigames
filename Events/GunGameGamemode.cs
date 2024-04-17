@@ -73,7 +73,8 @@ public class GunGameGamemode : Event
     // Weapon tiers with int as the key and weapon combo as the value
     private readonly Dictionary<int, PlayerLoadout> _tierLoadout = new Dictionary<int, PlayerLoadout>()
     {
-        { 0, 
+        { 
+            0, 
             new PlayerLoadout() 
             {
                 PrimaryWeapon = new WeaponItem() { Tool = Weapons.M9 }
