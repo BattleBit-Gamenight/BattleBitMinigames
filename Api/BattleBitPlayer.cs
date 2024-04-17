@@ -42,7 +42,6 @@ public class BattleBitApiPlayer : Player<BattleBitApiPlayer>
      */
     public string GetPlayerProperty(string propertyName)
     {
-        // Check if the player has the property
         return (this.PlayerProperties.TryGetValue(propertyName, out var property) ? property : string.Empty) ?? string.Empty;
     }
     
@@ -52,9 +51,9 @@ public class BattleBitApiPlayer : Player<BattleBitApiPlayer>
      * @param value The value of the property
      * @return True if the property was set, false if it was not
      */
-    public bool SetPlayerProperty(string propertyName, string? value)
+    public void SetPlayerProperty(string propertyName, string? value)
     {
-        return this.PlayerProperties.TryAdd(propertyName, value);
+        this.PlayerProperties.TryAdd(propertyName, value);
     }
     
     /**
@@ -64,5 +63,13 @@ public class BattleBitApiPlayer : Player<BattleBitApiPlayer>
     public void RemovePlayerProperty(string propertyName)
     {
         this.PlayerProperties.TryRemove(propertyName, out _);
+    }
+    
+    /**
+     * Clear all player properties
+     */
+    public void ClearAllPlayerProperties()
+    {
+        this.PlayerProperties.Clear();
     }
 }

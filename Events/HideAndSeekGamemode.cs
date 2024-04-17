@@ -3,7 +3,9 @@ using System.Text;
 using BattleBitAPI.Common;
 using BattleBitAPI.Server;
 using BattleBitMinigames.Api;
+using BattleBitMinigames.Enums;
 using BattleBitMinigames.Helpers;
+using BattleBitMinigames.Interfaces;
 
 namespace BattleBitMinigames.Events;
 
@@ -30,33 +32,33 @@ public class HideAndSeekGamemode : Event
     private float SeekerReceiveDamageMultiplier { get; set; } = 0.0f;
     
     // DO NOT CHANGE THESE VALUES
-    private MiniGameState State { get; set; } = MiniGameState.WaitingForPlayers;
+    private MinigameStates State { get; set; } = MinigameStates.WaitingForPlayers;
     
     // Game Logic
     readonly Random _random = new();
     
     private static bool IsPlayerSeeking(BattleBitApiPlayer player)
     {
-        var value = player.GetPlayerProperty(IPlayerProperties.IsSeeking);
+        var value = player.GetPlayerProperty(PlayerProperties.IHideAndSeekPlayerProperties.IsSeeking);
         return value != string.Empty && value != "false";
     }
     
     private static int GetPlayerHidersFound(BattleBitApiPlayer player)
     {
-        var value = player.GetPlayerProperty(IPlayerProperties.HidersFound);
+        var value = player.GetPlayerProperty(PlayerProperties.IHideAndSeekPlayerProperties.HidersFound);
         return value != string.Empty ? int.Parse(value) : 0;
     }
     
     private static void AddPlayerHidersFound(BattleBitApiPlayer player)
     {
         var hidersFound = GetPlayerHidersFound(player);
-        player.SetPlayerProperty(IPlayerProperties.HidersFound, (hidersFound + 1).ToString());
+        player.SetPlayerProperty(PlayerProperties.IHideAndSeekPlayerProperties.HidersFound, (hidersFound + 1).ToString());
         Program.Logger.Info($"{player.Name} has found {hidersFound + 1} hiders!");
     }
     
     private static void MakePlayerSeeker(BattleBitApiPlayer player)
     {
-        player.SetPlayerProperty(IPlayerProperties.IsSeeking, "true");
+        player.SetPlayerProperty(PlayerProperties.IHideAndSeekPlayerProperties.IsSeeking, "true");
         player.ChangeTeam(Team.TeamA);
         player.Modifications.CanSpectate = false;
         Program.Logger.Info($"{player.Name} is now a seeker!");
@@ -64,7 +66,7 @@ public class HideAndSeekGamemode : Event
     
     private static void MakePlayerHider(BattleBitApiPlayer player)
     {
-        player.SetPlayerProperty(IPlayerProperties.IsSeeking, "false");
+        player.SetPlayerProperty(PlayerProperties.IHideAndSeekPlayerProperties.IsSeeking, "false");
         player.ChangeTeam(Team.TeamB);
         player.Modifications.CanSpectate = false;
         Program.Logger.Info($"{player.Name} is now a hider!");
@@ -73,17 +75,17 @@ public class HideAndSeekGamemode : Event
     // Set default values for the hide and seek player properties
     private static void SetDefaultPlayerProperties(BattleBitApiPlayer player)
     {
-        player.SetPlayerProperty(IPlayerProperties.IsSeeking, "false");
-        player.SetPlayerProperty(IPlayerProperties.SeekingMeter, "NO LIFE DETECTED (300m+)");
-        player.SetPlayerProperty(IPlayerProperties.HidersFound, "0");
+        player.SetPlayerProperty(PlayerProperties.IHideAndSeekPlayerProperties.IsSeeking, "false");
+        player.SetPlayerProperty(PlayerProperties.IHideAndSeekPlayerProperties.SeekingMeter, "NO LIFE DETECTED (300m+)");
+        player.SetPlayerProperty(PlayerProperties.IHideAndSeekPlayerProperties.HidersFound, "0");
         Program.Logger.Info($"Set default properties for {player.Name}");
     }
     
     private static void ClearPlayerProperties(BattleBitApiPlayer player)
     {
-        player.RemovePlayerProperty(IPlayerProperties.IsSeeking);
-        player.RemovePlayerProperty(IPlayerProperties.SeekingMeter);
-        player.RemovePlayerProperty(IPlayerProperties.HidersFound);
+        player.RemovePlayerProperty(PlayerProperties.IHideAndSeekPlayerProperties.IsSeeking);
+        player.RemovePlayerProperty(PlayerProperties.IHideAndSeekPlayerProperties.SeekingMeter);
+        player.RemovePlayerProperty(PlayerProperties.IHideAndSeekPlayerProperties.HidersFound);
         Program.Logger.Info($"Cleared properties for {player.Name}");
     }
 
@@ -92,7 +94,7 @@ public class HideAndSeekGamemode : Event
         Program.Logger.Info("Starting player seeker meter!");
         
         // Every 1 second check if a seeker is near a hider
-        while (State == MiniGameState.Running)
+        while (State == MinigameStates.Running)
         {
             try
             {
@@ -117,7 +119,7 @@ public class HideAndSeekGamemode : Event
                     });
 
                     // Update the SeekingMeter based on the closest hider found
-                    seeker.SetPlayerProperty(IPlayerProperties.SeekingMeter, closestDistance switch
+                    seeker.SetPlayerProperty(PlayerProperties.IHideAndSeekPlayerProperties.SeekingMeter, closestDistance switch
                     {
                         <= 25 => $"{RichTextHelper.FromColorName("IndianRed")}SPICY{RichTextHelper.FromColorName("Snow")} (0-25m)",
                         <= 50 => $"{RichTextHelper.FromColorName("Red")}HOT{RichTextHelper.FromColorName("Snow")} (25-50m)",
@@ -142,7 +144,7 @@ public class HideAndSeekGamemode : Event
     private async void StartWaitingForPlayersMessage()
     {
         Program.Logger.Info("Waiting for players to join!");
-        while (State == MiniGameState.WaitingForPlayers && Server.CurrentPlayerCount < RequiredPlayerCountToStart)
+        while (State == MinigameStates.WaitingForPlayers && Server.CurrentPlayerCount < RequiredPlayerCountToStart)
         {
             try
             {
@@ -175,17 +177,17 @@ public class HideAndSeekGamemode : Event
                 {
                     player.Modifications.CanSpectate = false;
                     var isSeeking = IsPlayerSeeking(player);
-                    var seekerMeter = player.GetPlayerProperty(IPlayerProperties.SeekingMeter);
+                    var seekerMeter = player.GetPlayerProperty(PlayerProperties.IHideAndSeekPlayerProperties.SeekingMeter);
                     var message = new StringBuilder();
                     message.AppendLine(
                         $"{RichTextHelper.Size(100)}{RichTextHelper.FromColorName("Snow")}BattleBit Hide and Seek!{RichTextHelper.Size(100)}");
                     switch (State)
                     {
-                        case MiniGameState.SelectingSeekers:
+                        case MinigameStates.SelectingSeekers:
                             message.AppendLine(
                                 $"{RichTextHelper.Size(140)}{RichTextHelper.FromColorName("Orange")}Randomly selecting seekers!{RichTextHelper.Size(100)}");
                             break;
-                        case MiniGameState.CountingDown:
+                        case MinigameStates.CountingDown:
                         {
                             // Tell hiders they need to hide
                             if (!isSeeking)
@@ -212,7 +214,7 @@ public class HideAndSeekGamemode : Event
                                 $"{RichTextHelper.FromColorName("Snow")}Seekers: {totalSeekers} | Hiders: {totalHiders}");
                             break;
                         }
-                        case MiniGameState.Running:
+                        case MinigameStates.Running:
                         {
                             message.AppendLine(
                                 $"{RichTextHelper.Size(150)}{RichTextHelper.FromColorName("Orange")}You are currently " +
@@ -229,7 +231,7 @@ public class HideAndSeekGamemode : Event
 
                             break;
                         }
-                        case MiniGameState.Ending:
+                        case MinigameStates.Ending:
                             message.AppendLine(
                                 $"{RichTextHelper.Size(140)}{RichTextHelper.FromColorName("Orange")}Game has ended!{RichTextHelper.Size(100)}");
                             break;
@@ -259,7 +261,7 @@ public class HideAndSeekGamemode : Event
         {
             Program.Logger.Info("Hide and Seek gamemode started!");
         
-            State = MiniGameState.SelectingSeekers;
+            State = MinigameStates.SelectingSeekers;
 
             Program.Logger.Info("Cleared all player properties!");
             foreach (var player in Server.AllPlayers)
@@ -280,7 +282,7 @@ public class HideAndSeekGamemode : Event
                     await Task.Delay(1000);
                     countdown--;
 
-                    if (State != MiniGameState.SelectingSeekers || State == MiniGameState.Ending) return;
+                    if (State != MinigameStates.SelectingSeekers || State == MinigameStates.Ending) return;
                 }
                 catch (Exception e)
                 {
@@ -322,7 +324,7 @@ public class HideAndSeekGamemode : Event
                 }
             }
             
-            State = MiniGameState.CountingDown;
+            State = MinigameStates.CountingDown;
             
             Program.Logger.Info("Setting hiders properties!");
             // Get all other players to be the hiders
@@ -371,7 +373,7 @@ public class HideAndSeekGamemode : Event
                         }
                     }
                     
-                    if (State != MiniGameState.CountingDown && State != MiniGameState.Ending) return;
+                    if (State != MinigameStates.CountingDown && State != MinigameStates.Ending) return;
                 }
                 catch (Exception e)
                 {
@@ -395,7 +397,7 @@ public class HideAndSeekGamemode : Event
             
             Server.AnnounceShort($"Hide and Seek Started and seekers can now spawn in!");
             
-            State = MiniGameState.Running;
+            State = MinigameStates.Running;
             await Task.Run(StartPlayerSeekerMeter);
             
             Program.Logger.Info("Allowing seekers to deploy!");
@@ -452,12 +454,12 @@ public class HideAndSeekGamemode : Event
     public override Task OnPlayerChangeTeam(BattleBitApiPlayer player, Team team)
     {
         player.Modifications.CanSpectate = false;
-        if (State is MiniGameState.Running or MiniGameState.CountingDown)
+        if (State is MinigameStates.Running or MinigameStates.CountingDown)
         {
             MakePlayerSeeker(player);
         
             var totalHiders = Server.AllPlayers.Count(hiderPlayer => !IsPlayerSeeking(hiderPlayer));
-            if (totalHiders == 0 && State == MiniGameState.Running)
+            if (totalHiders == 0 && State == MinigameStates.Running)
             {
                 Server.AnnounceLong("All hiders have been found! Seekers win!");
                 Server.ForceEndGame(Team.TeamA);
@@ -479,7 +481,8 @@ public class HideAndSeekGamemode : Event
         return Task.FromResult(true);
     }*/
 
-    public override async Task<OnPlayerSpawnArguments?> OnPlayerSpawning(BattleBitApiPlayer player, OnPlayerSpawnArguments request)
+    public override async Task<OnPlayerSpawnArguments?> OnPlayerSpawning(BattleBitApiPlayer player,
+        OnPlayerSpawnArguments request)
     {
         player.Modifications.RespawnTime = 0.0f;
         player.Modifications.CaptureFlagSpeedMultiplier = 0.0f;
@@ -533,7 +536,7 @@ public class HideAndSeekGamemode : Event
         
         if (player.InVehicle)
         {
-            if (IsPlayerSeeking(player) && State != MiniGameState.Running)
+            if (IsPlayerSeeking(player) && State != MinigameStates.Running)
             {
                 PlayerHelpers.KillPlayerInVehicle(player, "Vehicles are not allowed until the game starts!");
             }
@@ -556,7 +559,7 @@ public class HideAndSeekGamemode : Event
         {
             AddPlayerHidersFound(killer);
             MakePlayerSeeker(victim);
-            Server.SayToAllChat($"{RichTextHelper.Bold(true)}{killer.Name}{RichTextHelper.Bold(false)} found {RichTextHelper.Bold(true)}{victim.Name}{RichTextHelper.Bold(false)}! They've found {killer.GetPlayerProperty(IPlayerProperties.HidersFound)} hiders!");
+            Server.SayToAllChat($"{RichTextHelper.Bold(true)}{killer.Name}{RichTextHelper.Bold(false)} found {RichTextHelper.Bold(true)}{victim.Name}{RichTextHelper.Bold(false)}! They've found {killer.GetPlayerProperty(PlayerProperties.IHideAndSeekPlayerProperties.HidersFound)} hiders!");
         }
         
         // If all hiders are found, end the game
@@ -613,7 +616,7 @@ public class HideAndSeekGamemode : Event
     public override Task OnPlayerDisconnected(BattleBitApiPlayer player)
     {
         var totalHiders = Server.AllPlayers.Count(player => !IsPlayerSeeking(player));
-        if (totalHiders == 0 && State == MiniGameState.Running)
+        if (totalHiders == 0 && State == MinigameStates.Running)
         {
             Server.AnnounceLong("All hiders have been found! Seekers win!");
             Server.ForceEndGame(Team.TeamA);
@@ -627,10 +630,10 @@ public class HideAndSeekGamemode : Event
         player.Modifications.CanSpectate = false;
         player.Modifications.CaptureFlagSpeedMultiplier = 0.0f;
         
-        if (State is MiniGameState.Running or MiniGameState.CountingDown)
+        if (State is MinigameStates.Running or MinigameStates.CountingDown)
         {
             MakePlayerSeeker(player);
-            player.Modifications.CanDeploy = State != MiniGameState.CountingDown;
+            player.Modifications.CanDeploy = State != MinigameStates.CountingDown;
         } else {
             MakePlayerHider(player);
             player.Modifications.CanDeploy = false;
@@ -651,31 +654,15 @@ public class HideAndSeekGamemode : Event
                 Server.RoundSettings.SecondsLeft = 0;
                 break;
             case GameState.WaitingForPlayers:
-                State = MiniGameState.WaitingForPlayers;
+                State = MinigameStates.WaitingForPlayers;
                 Server.RoundSettings.PlayersToStart = 1;
                 break;
             case GameState.EndingGame:
-                State = MiniGameState.Ending;
+                State = MinigameStates.Ending;
                 Server.RoundSettings.SecondsLeft = 0;
                 break;
         }
 
         return Task.CompletedTask;
     }
-}
-
-public interface IPlayerProperties
-{
-    public const string IsSeeking = "is_seeking";
-    public const string HidersFound = "hiders_found";
-    public const string SeekingMeter = "seeking_meter";
-}
-
-public enum MiniGameState
-{
-    WaitingForPlayers,
-    SelectingSeekers,
-    CountingDown,
-    Running,
-    Ending
 }

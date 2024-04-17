@@ -16,7 +16,16 @@ public class BattleBitServer : GameServer<BattleBitApiPlayer>
         AddEvent(new ServerSettings(), this);
         AddEvent(new PlayerRoles(), this);
         AddEvent(new ChatCommandListener(), this);
-        AddEvent(new HideAndSeekGamemode(), this);
+        //AddEvent(new HideAndSeekGamemode(), this);
+        AddEvent(new GunGameGamemode(), this);
+    }
+    
+    public void ClearAllPlayerProperties()
+    {
+        foreach (var player in AllPlayers)
+        {
+            player.ClearAllPlayerProperties();
+        }
     }
 
     private void AddEvent(Event @event, BattleBitServer server)
