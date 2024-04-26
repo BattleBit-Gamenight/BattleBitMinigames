@@ -12,8 +12,9 @@ namespace BattleBitMinigames.Events;
 public class HideAndSeekGamemode : Event
 {
     // GAMEMODE SETTINGS
-    private int RequiredPlayerCountToStart { get; set; } = 1;
+    private int RequiredPlayerCountToStart { get; set; } = 4;
     private int HideTimeDuration { get; set; } = 180;
+    private int SelectingSeekersDuration { get; set; } = 30;
     
     // HIDER SETTINGS
     private float HiderRunSpeedMultiplierDuringCountdown { get; set; } = 2.0f;
@@ -276,7 +277,7 @@ public class HideAndSeekGamemode : Event
             }
             
             Program.Logger.Info("Preparing to select seekers!");
-            var countdown = 30;
+            var countdown = SelectingSeekersDuration;
             while (countdown > 0)
             {
                 try
@@ -392,6 +393,7 @@ public class HideAndSeekGamemode : Event
                 try
                 {
                     hider.Modifications.RunningSpeedMultiplier = HiderRunSpeedMultiplierDuringGame;
+                    hider.Modifications.JumpHeightMultiplier = HiderJumpHeightMultiplierDuringGame;
                 }
                 catch (Exception e)
                 {
@@ -488,9 +490,6 @@ public class HideAndSeekGamemode : Event
     public override async Task<OnPlayerSpawnArguments?> OnPlayerSpawning(BattleBitApiPlayer player,
         OnPlayerSpawnArguments request)
     {
-        player.Modifications.RespawnTime = 0.0f;
-        player.Modifications.CaptureFlagSpeedMultiplier = 0.0f;
-        
         if (IsPlayerSeeking(player))
         {
             request.Loadout = new PlayerLoadout();
@@ -534,7 +533,9 @@ public class HideAndSeekGamemode : Event
 
     public override async Task OnPlayerSpawned(BattleBitApiPlayer player)
     {
-        await Task.Delay(50);
+        await Task.Delay(100);
+        player.Modifications.RespawnTime = 0.0f;
+        player.Modifications.CaptureFlagSpeedMultiplier = 0.0f;
         player.Modifications.CanSpectate = false;
         
         if (player.InVehicle)
