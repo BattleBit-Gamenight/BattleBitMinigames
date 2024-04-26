@@ -11,6 +11,11 @@ public class ServerSettings : Event
             Server.MapRotation.AddToRotation(Map);
         }
         
+        foreach (var Gamemode in Data.ServerSettings.GamemodeRotation)
+        {
+            Server.GamemodeRotation.AddToRotation(Gamemode);
+        }
+        
         return Task.CompletedTask;
     }
 }

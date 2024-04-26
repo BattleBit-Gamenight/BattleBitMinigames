@@ -13,11 +13,11 @@ public class BattleBitServer : GameServer<BattleBitApiPlayer>
     
     public BattleBitServer()
     {
-        AddEvent(new ServerSettings(), this);
+        //AddEvent(new ServerSettings(), this);
         AddEvent(new PlayerRoles(), this);
         AddEvent(new ChatCommandListener(), this);
-        //AddEvent(new HideAndSeekGamemode(), this);
-        AddEvent(new GunGameGamemode(), this);
+        AddEvent(new HideAndSeekGamemode(), this);
+        //AddEvent(new GunGameGamemode(), this);
     }
     
     public void ClearAllPlayerProperties()

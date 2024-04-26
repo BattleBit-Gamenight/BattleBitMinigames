@@ -12,7 +12,7 @@ namespace BattleBitMinigames.Events;
 public class HideAndSeekGamemode : Event
 {
     // GAMEMODE SETTINGS
-    private int RequiredPlayerCountToStart { get; set; } = 4;
+    private int RequiredPlayerCountToStart { get; set; } = 1;
     private int HideTimeDuration { get; set; } = 180;
     
     // HIDER SETTINGS
@@ -60,7 +60,6 @@ public class HideAndSeekGamemode : Event
     {
         player.SetPlayerProperty(PlayerProperties.IHideAndSeekPlayerProperties.IsSeeking, "true");
         player.ChangeTeam(Team.TeamA);
-        player.Modifications.CanSpectate = false;
         Program.Logger.Info($"{player.Name} is now a seeker!");
     }
     
@@ -68,7 +67,6 @@ public class HideAndSeekGamemode : Event
     {
         player.SetPlayerProperty(PlayerProperties.IHideAndSeekPlayerProperties.IsSeeking, "false");
         player.ChangeTeam(Team.TeamB);
-        player.Modifications.CanSpectate = false;
         Program.Logger.Info($"{player.Name} is now a hider!");
     }
     
@@ -175,7 +173,6 @@ public class HideAndSeekGamemode : Event
                     Server.AllPlayers.Count(player => player.IsAlive && !IsPlayerSeeking(player));
                 foreach (var player in Server.AllPlayers)
                 {
-                    player.Modifications.CanSpectate = false;
                     var isSeeking = IsPlayerSeeking(player);
                     var seekerMeter = player.GetPlayerProperty(PlayerProperties.IHideAndSeekPlayerProperties.SeekingMeter);
                     var message = new StringBuilder();
@@ -268,6 +265,7 @@ public class HideAndSeekGamemode : Event
             {
                 player.ChangeTeam(Team.TeamB);
                 player.Kill();
+                player.Modifications.CanSpectate = false;
                 ClearPlayerProperties(player);
             }
             
@@ -364,7 +362,7 @@ public class HideAndSeekGamemode : Event
                             if (IsPlayerSeeking(player))
                             {
                                 PlayerHelpers.KillPlayerInVehicle(player,
-                                    "Vehicles are not allowed until the game starts!");
+                                    $"{RichTextHelper.FromColorName("Red")}{RichTextHelper.Bold(true)}Vehicles are not allowed until the game starts!");
                             }
                         }
                         catch (Exception e)
@@ -533,17 +531,18 @@ public class HideAndSeekGamemode : Event
     public override async Task OnPlayerSpawned(BattleBitApiPlayer player)
     {
         await Task.Delay(50);
+        player.Modifications.CanSpectate = false;
         
         if (player.InVehicle)
         {
             if (IsPlayerSeeking(player) && State != MinigameStates.Running)
             {
-                PlayerHelpers.KillPlayerInVehicle(player, "Vehicles are not allowed until the game starts!");
+                PlayerHelpers.KillPlayerInVehicle(player, $"{RichTextHelper.FromColorName("Red")}{RichTextHelper.Bold(true)}Vehicles are not allowed until the game starts!");
             }
             
             if (!IsPlayerSeeking(player))
             {
-                PlayerHelpers.KillPlayerInVehicle(player, "Hiders are not allowed to use vehicles!");
+                PlayerHelpers.KillPlayerInVehicle(player, $"{RichTextHelper.FromColorName("Red")}{RichTextHelper.Bold(true)}Hiders are not allowed to use vehicles!");
             }
         }
     }
@@ -621,6 +620,7 @@ public class HideAndSeekGamemode : Event
             Server.AnnounceLong("All hiders have been found! Seekers win!");
             Server.ForceEndGame(Team.TeamA);
         }
+        ClearPlayerProperties(player);
         
         return Task.CompletedTask;
     }
@@ -629,6 +629,7 @@ public class HideAndSeekGamemode : Event
     {
         player.Modifications.CanSpectate = false;
         player.Modifications.CaptureFlagSpeedMultiplier = 0.0f;
+        ClearPlayerProperties(player);
         
         if (State is MinigameStates.Running or MinigameStates.CountingDown)
         {
@@ -658,6 +659,10 @@ public class HideAndSeekGamemode : Event
                 Server.RoundSettings.PlayersToStart = 1;
                 break;
             case GameState.EndingGame:
+                foreach (var player in Server.AllPlayers)
+                {
+                    ClearPlayerProperties(player);
+                }
                 State = MinigameStates.Ending;
                 Server.RoundSettings.SecondsLeft = 0;
                 break;
