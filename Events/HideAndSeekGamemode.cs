@@ -493,9 +493,9 @@ public class HideAndSeekGamemode : Event
         if (IsPlayerSeeking(player))
         {
             request.Loadout = new PlayerLoadout();
-            request.Loadout.HeavyGadget = Gadgets.SledgeHammer;
             var loadoutLightGadget = _random.NextDouble() >= .5 ? Gadgets.AirDrone : Gadgets.AntiPersonnelMine;
             request.Loadout.LightGadget = loadoutLightGadget;
+            request.Loadout.HeavyGadget = Gadgets.SledgeHammer;
             request.Wearings.Head = "ANV2_Universal_UniC_Helmet_00_Red_N";
             request.Wearings.Chest = "ANV2_Universal_UniC_Armor_00_Red_N";
             request.Wearings.Belt = "ANV2_Universal_UniC_Belt_00_Red_S";
