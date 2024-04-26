@@ -97,12 +97,13 @@ public class HideAndSeekGamemode : Event
             try
             {
                 var seekers = Server.AllPlayers.Where(IsPlayerSeeking).ToList();
-                var hiders = Server.AllPlayers.Where(player => player.IsAlive && IsPlayerSeeking(player)).ToList();
+                var hiders = Server.AllPlayers.Where(player => player.IsAlive && !IsPlayerSeeking(player)).ToList();
 
                 seekers.ForEach(async seeker =>
                 {
                     // Initialize the closest distance to a very high value
                     double closestDistance = double.MaxValue;
+                    var closestHiderName = string.Empty;
 
                     hiders.ForEach(hider =>
                     {
@@ -113,11 +114,12 @@ public class HideAndSeekGamemode : Event
                         if (distance < closestDistance)
                         {
                             closestDistance = distance;
+                            closestHiderName = hider.Name;
                         }
                     });
 
                     // Update the SeekingMeter based on the closest hider found
-                    seeker.SetPlayerProperty(PlayerProperties.IHideAndSeekPlayerProperties.SeekingMeter, closestDistance switch
+                    var seekingMeterString = closestDistance switch
                     {
                         <= 25 => $"{RichTextHelper.FromColorName("IndianRed")}SPICY{RichTextHelper.FromColorName("Snow")} (0-25m)",
                         <= 50 => $"{RichTextHelper.FromColorName("Red")}HOT{RichTextHelper.FromColorName("Snow")} (25-50m)",
@@ -125,7 +127,10 @@ public class HideAndSeekGamemode : Event
                         <= 150 => $"{RichTextHelper.FromColorName("Blue")}COLD{RichTextHelper.FromColorName("Snow")} (75-150m)",
                         <= 300 => $"{RichTextHelper.FromColorName("Blue")}FREEZING{RichTextHelper.FromColorName("Snow")} (150-300m)",
                         _ => $"{RichTextHelper.FromColorName("Violet")}NO LIFE DETECTED{RichTextHelper.FromColorName("Snow")} (300m+)"
-                    });
+                    };
+                    
+                    if (closestHiderName != "") seekingMeterString += $"{RichTextHelper.NewLine()}Closest Hider: {RichTextHelper.FromColorName("RoyalBlue")}{closestHiderName}";
+                    seeker.SetPlayerProperty(PlayerProperties.IHideAndSeekPlayerProperties.SeekingMeter, seekingMeterString);
 
                     await Task.Delay(5);
                 });
@@ -263,9 +268,10 @@ public class HideAndSeekGamemode : Event
             Program.Logger.Info("Cleared all player properties!");
             foreach (var player in Server.AllPlayers)
             {
-                player.ChangeTeam(Team.TeamB);
-                player.Kill();
+                player.Modifications.CanDeploy = false;
                 player.Modifications.CanSpectate = false;
+                player.Kill();
+                player.ChangeTeam(Team.TeamB);
                 ClearPlayerProperties(player);
             }
             
@@ -326,7 +332,7 @@ public class HideAndSeekGamemode : Event
             
             Program.Logger.Info("Setting hiders properties!");
             // Get all other players to be the hiders
-            var hiders = Server.AllPlayers.Where(player => !IsPlayerSeeking(player)).ToList();
+            var hiders = Server.AllPlayers.Where(hider => !seekers.Contains(hider)).ToList();
             foreach (var hider in hiders)
             {
                 try
@@ -489,8 +495,8 @@ public class HideAndSeekGamemode : Event
         {
             request.Loadout = new PlayerLoadout();
             request.Loadout.HeavyGadget = Gadgets.SledgeHammer;
-            request.Loadout.LightGadget = Gadgets.AirDrone;
-            request.Loadout.Throwable = Gadgets.AntiPersonnelMine;
+            var loadoutLightGadget = _random.NextDouble() >= .5 ? Gadgets.AirDrone : Gadgets.AntiPersonnelMine;
+            request.Loadout.LightGadget = loadoutLightGadget;
             request.Wearings.Head = "ANV2_Universal_UniC_Helmet_00_Red_N";
             request.Wearings.Chest = "ANV2_Universal_UniC_Armor_00_Red_N";
             request.Wearings.Belt = "ANV2_Universal_UniC_Belt_00_Red_S";
@@ -516,8 +522,6 @@ public class HideAndSeekGamemode : Event
             player.Modifications.FallDamageMultiplier = HiderFallDamageMultiplier;
             player.Modifications.ReceiveDamageMultiplier = HiderReceiveDamageMultiplier;
             player.Modifications.GiveDamageMultiplier = HiderGiveDamageMultiplier;
-            player.Modifications.RunningSpeedMultiplier = HiderRunSpeedMultiplierDuringGame;
-            player.Modifications.JumpHeightMultiplier = HiderJumpHeightMultiplierDuringGame;
             player.Modifications.CanSuicide = false;
             player.Modifications.HideOnMap = true;
             player.Modifications.IsExposedOnMap = false;

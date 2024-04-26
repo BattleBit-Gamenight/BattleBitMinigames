@@ -7,7 +7,7 @@ public class BattleBitApiPlayer : Player<BattleBitApiPlayer>
 {
     public bool Debug = false;
     
-    public ConcurrentDictionary<string, string?> PlayerProperties { get; set; } = new ConcurrentDictionary<string, string?>();
+    public ConcurrentDictionary<string, string?> PlayerProperties { get; set; } = new();
     
     public PlayerRoles[] PlayerRoles = {
         Enums.PlayerRoles.Default
@@ -42,7 +42,7 @@ public class BattleBitApiPlayer : Player<BattleBitApiPlayer>
      */
     public string GetPlayerProperty(string propertyName)
     {
-        return (this.PlayerProperties.TryGetValue(propertyName, out var property) ? property : string.Empty) ?? string.Empty;
+        return (PlayerProperties.TryGetValue(propertyName, out var property) ? property : string.Empty) ?? string.Empty;
     }
     
     /**
@@ -53,7 +53,7 @@ public class BattleBitApiPlayer : Player<BattleBitApiPlayer>
      */
     public void SetPlayerProperty(string propertyName, string? value)
     {
-        this.PlayerProperties.TryAdd(propertyName, value);
+        PlayerProperties[propertyName] = value;
     }
     
     /**
@@ -62,7 +62,7 @@ public class BattleBitApiPlayer : Player<BattleBitApiPlayer>
      */
     public void RemovePlayerProperty(string propertyName)
     {
-        this.PlayerProperties.TryRemove(propertyName, out _);
+        PlayerProperties.TryRemove(propertyName, out _);
     }
     
     /**
@@ -70,6 +70,6 @@ public class BattleBitApiPlayer : Player<BattleBitApiPlayer>
      */
     public void ClearAllPlayerProperties()
     {
-        this.PlayerProperties.Clear();
+        PlayerProperties.Clear();
     }
 }
