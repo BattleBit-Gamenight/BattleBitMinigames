@@ -1,20 +1,21 @@
 ﻿using System.Numerics;
 using BattleBitMinigames.Data.Regions;
+using BattleBitMinigames.Handlers;
 
 namespace BattleBitMinigames.Data;
 
 public class RegionList
 {
-    public static List<List<Vector2>> GetMapRegions(string mapName)
+    public static List<RegionHelper.Region?> GetMapRegions(string map)
     {
-        return mapName switch
+        return map switch
         {
-            // Get the regions for the map "Lonovo"
-            "Lonovo" => new List<List<Vector2>>
+            "Lonovo" => new List<RegionHelper.Region?>
             {
                 LonovoRegions.TeamASafeZone,
                 LonovoRegions.TeamBSafeZone
             },
+            _ => new List<RegionHelper.Region?>()
         };
     }
 }

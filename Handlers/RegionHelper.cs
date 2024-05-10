@@ -5,10 +5,24 @@ namespace BattleBitMinigames.Handlers;
 
 public class RegionHelper
 {
-    public static bool GetIsPlayerInRegion(List<List<Vector2>> zone, BattleBitPlayer player)
+    public class Region
+    {
+        public string Name { get; set; }
+        public string Message { get; set; }
+        public List<Vector2> Points { get; set; }
+
+        public Region(string name, string message, List<Vector2> points)
+        {
+            Name = name;
+            Message = message;
+            Points = new List<Vector2>(points);
+        }
+    }
+    
+    public static Region? GetIsPlayerInRegion(List<Region?> regions, BattleBitPlayer player)
     {
         // Check if the player is in the regions
-        return zone.Any(region => IsPointInPolygon(new Vector2(player.Position.X, player.Position.Z), region));
+        return regions.FirstOrDefault(region => IsPointInPolygon(new Vector2(player.Position.X, player.Position.Z), region.Points));
     }
     
     private static bool IsPointInPolygon(Vector2 point, List<Vector2> zone)

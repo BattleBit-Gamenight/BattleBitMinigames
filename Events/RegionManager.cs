@@ -2,6 +2,7 @@
 using BattleBitMinigames.Api;
 using BattleBitMinigames.Data;
 using BattleBitMinigames.Handlers;
+using BattleBitMinigames.Helpers;
 
 namespace BattleBitMinigames.Events;
 
@@ -17,15 +18,16 @@ public class RegionManager : Event
             {
                 foreach (var player in Server.AllPlayers.Where(player => player.IsAlive && player.Position != Vector3.Zero))
                 {
-                    if (RegionHelper.GetIsPlayerInRegion(RegionList.GetMapRegions(Server.Map), player))
+                    var region = RegionHelper.GetIsPlayerInRegion(RegionList.GetMapRegions(Server.Map), player);
+                    if (region != null)
                     {
                         // TODO: Remove in prod
-                        player.Message("You are in a safe zone!", 999);
+                        player.Message($"You are in {RichTextHelper.Bold(true)}{region.Name}{RichTextHelper.Bold(false)}!", 999);
                         // TODO: Spawn task to kill player after X amount of time, make message prettier.
                     } 
                     else
                     {
-                        player.Message("You are not in a safe zone!", 1);
+                        player.Message("You are not in a region!", 1);
                     }
                 }
 

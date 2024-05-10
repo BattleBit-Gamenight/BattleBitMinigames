@@ -1,28 +1,37 @@
 ﻿using System.Numerics;
+using BattleBitMinigames.Handlers;
 
 namespace BattleBitMinigames.Data.Regions;
 
 public class LonovoRegions
 {
-    // US safe zone region
-    public static readonly List<Vector2> TeamASafeZone = new()
-    {
-        new Vector2(-475, -242),
-        new Vector2(-130f, -204),
-        new Vector2(135, -204),
-        new Vector2(475, -272),
-        new Vector2(475, -475),
-        new Vector2(-475, -475)
-    };
+    // US safe zone
+    public static readonly RegionHelper.Region TeamASafeZone = new (
+        "US Safe Zone",
+        "You've entered the US Safe Zone. Please leave immediately.",
+        new List<Vector2>
+        {
+            new (-475, -242),
+            new (-130f, -204),
+            new (135, -204),
+            new (475, -272),
+            new (475, -475),
+            new (-475, -475)
+        }
+    );
     
     // RU safe zone region
-    public static readonly List<Vector2> TeamBSafeZone = new()
-    {
-        new Vector2(-475, -242),
-        new Vector2(-130f, -204),
-        new Vector2(135, -204),
-        new Vector2(475, -272),
-        new Vector2(475, -475),
-        new Vector2(-475, -475)
-    };
+    public static readonly RegionHelper.Region? TeamBSafeZone = new (
+        "RU Safe Zone",
+        "You've entered the RU Safe Zone. Please leave immediately.",
+        new List<Vector2>
+        {
+            new (-475, -242),
+            new (-130f, -204),
+            new (135, -204),
+            new (475, -272),
+            new (475, -475),
+            new (-475, -475)
+        }
+    );
 }
