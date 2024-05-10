@@ -12,7 +12,7 @@ public class ZombiesGamemode : Event
     // GAMEMODE SETTINGS
     private int RequiredPlayerCountToStart { get; set; } = 1;
     private int SelectingInfectedDuration { get; set; } = 60;
-    private int HumanPrepTimeDuration { get; set; } = 30;
+    private int HumanPrepTimeDuration { get; set; } = 90;
     
     // DO NOT CHANGE THESE VALUES
     private InfectedGameStates State { get; set; } = InfectedGameStates.WaitingForPlayers;
@@ -121,7 +121,6 @@ public class ZombiesGamemode : Event
         
         Server.MapRotation.SetRotation(
             "Construction",
-            "Frugis",
             "Kodiak",
             "LonovoRegions",
             "SandySunset",
@@ -167,6 +166,19 @@ public class ZombiesGamemode : Event
             try
             {
                squad.SquadPoints = 100000;
+            }
+            catch (Exception e)
+            {
+                Program.Logger.Error(e.Message);
+            }
+        }
+        
+        // Set squad points for each squad on Team B
+        foreach (var squad in Server.TeamBSquads)
+        {
+            try
+            {
+                squad.SquadPoints = 1000;
             }
             catch (Exception e)
             {
@@ -263,12 +275,7 @@ public class ZombiesGamemode : Event
             Server.AnnounceShort("The infected have won!");
             State = InfectedGameStates.Ending;
             Server.ForceEndGame(Team.TeamB);
-            return;
         }
-        
-        Server.AnnounceShort("The humans have won!");
-        State = InfectedGameStates.Ending;
-        Server.ForceEndGame(Team.TeamA);
     }
 
     private Task InfectNonDeployedPlayers()
@@ -425,6 +432,7 @@ public class ZombiesGamemode : Event
         var victim = args.Victim;
         
         if (victim == null) return Task.CompletedTask;
+        if (State != InfectedGameStates.Running) return Task.CompletedTask;
 
         if (killer == victim)
         {
@@ -437,6 +445,7 @@ public class ZombiesGamemode : Event
         
         if (IsPlayerInfected(killer))
         {
+            killer.Squad.SquadPoints += 10000;
             Server.SayToAllChat($"{killer.Name} has infected {victim.Name}!");
             InfectPlayer(victim);
             IncrementPlayerKillsAsInfected(killer);
@@ -444,6 +453,7 @@ public class ZombiesGamemode : Event
         }
         else
         {
+            killer.Squad.SquadPoints += 250;
             IncrementPlayerKillsAsHuman(killer);
         }
         
@@ -455,10 +465,12 @@ public class ZombiesGamemode : Event
     public override Task OnPlayerDisconnected(BattleBitPlayer player)
     {
         // Check if there are no humans left
-        if (Server.AllPlayers.Count(p => p.Team == Team.TeamA && p.IsAlive) == 0)
+        if (Server.AllPlayers.Count(p => p.Team == Team.TeamA && p.IsAlive) == 0 && State == InfectedGameStates.Running)
         {
             Server.ForceEndGame(Team.TeamB);
         }
+        
+        UpdateAllPlayerSideMessages();
         
         return Task.CompletedTask;
     }
@@ -499,6 +511,8 @@ public class ZombiesGamemode : Event
         player.Modifications.CanDeploy = false;
         player.Modifications.CanSpectate = false;
         player.ClearAllPlayerProperties();
+        
+        UpdateAllPlayerSideMessages();
         
         switch (State)
         {
@@ -558,6 +572,11 @@ public class ZombiesGamemode : Event
         
         if (IsPlayerInfected(player))
         {
+            // Infected player settings
+            player.Modifications.FallDamageMultiplier = 0.0f;
+            player.Modifications.MinimumHpToStartBleeding = 0;
+            player.Modifications.MinimumDamageToStartBleeding = 10000;
+            
             // Clear the player's loadout
             request.Loadout = new PlayerLoadout();
             
@@ -566,6 +585,16 @@ public class ZombiesGamemode : Event
             
             // Set default infected loadout
             request.Loadout.HeavyGadget = Gadgets.SledgeHammer;
+            // Random 50% chance to get grapple
+            if (_random.Next(100) < 50)
+            {
+                request.Loadout.LightGadget = Gadgets.GrapplingHook;
+            }
+            else
+            {
+                request.Loadout.Throwable = Gadgets.SmokeGrenadeRed;
+                request.Loadout.ThrowableExtra = 1;
+            }
             
             // Randomly become either a normal zombie (80% chance), fast zombie (5% chance), leaper zombie (5% chance), boomer zombie (5% chance), or tank zombie (5% chance)
             var random = _random.Next(100);
@@ -601,7 +630,7 @@ public class ZombiesGamemode : Event
                 // Player settings
                 player.SetPlayerProperty(PlayerProperties.IInfectedPlayerProperties.ZombieType, "leaper");
                 player.Modifications.RunningSpeedMultiplier = 1.5f;
-                player.Modifications.JumpHeightMultiplier = 2.5f;
+                player.Modifications.JumpHeightMultiplier = 5.0f;
                 player.Modifications.IsExposedOnMap = true;
                 
                 // Player wearings
