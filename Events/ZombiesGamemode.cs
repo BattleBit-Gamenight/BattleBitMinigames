@@ -545,7 +545,6 @@ public class ZombiesGamemode : Event
                 break;
             case GameState.EndingGame:
                 CheckForWinConditions();
-                Server.ExecuteCommand("setsize medium");
                 break;
         }
         
