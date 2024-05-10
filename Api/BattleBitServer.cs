@@ -16,8 +16,8 @@ public class BattleBitServer : GameServer<BattleBitPlayer>
         //AddEvent(new ServerSettings(), this);
         AddEvent(new PlayerRoles(), this);
         AddEvent(new ChatCommandListener(), this);
-        AddEvent(new RegionManager(), this);
-        // AddEvent(new ZombiesGamemode(), this);
+        //AddEvent(new RegionManager(), this);
+        AddEvent(new ZombiesGamemode(), this);
         //AddEvent(new HideAndSeekGamemode(), this);
         //AddEvent(new GunGameGamemode(), this);
     }

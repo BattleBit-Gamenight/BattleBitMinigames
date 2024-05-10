@@ -30,5 +30,7 @@ public interface PlayerProperties
     {
         public const string IsInfected = "infected_is_infected";
         public const string ZombieType = "infected_zombie_type";
+        public const string KillsAsInfected = "infected_kills_as_infected";
+        public const string KillsAsHuman = "infected_kills_as_human";
     }
 }

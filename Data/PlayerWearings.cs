@@ -37,4 +37,17 @@ public static class PlayerOutfits
         Backbag = "ANV2_Universal_UniC_Backpack_00_Red_N",
         Uniform = "ANY_NU_Uniform_UniCRed_00",
     };
+    
+    public static PlayerWearings Zombie = new()
+    {
+        Eye = "Eye_Zombie_01",
+        Face = "Face_Zombie_01",
+        Hair = "Hair_Zombie_01",
+        Skin = "Zombie_01",
+        Uniform = "ANY_NU_Uniform_Zombie_01",
+        Head = "ANV2_Universal_Zombie_Helmet_00_A_Z",
+        Chest = "ANV2_Universal_All_Armor_Null",
+        Backbag = "ANV2_Universal_All_Backpack_Null",
+        Belt = "ANV2_Universal_All_Belt_Null",
+    };
 }
