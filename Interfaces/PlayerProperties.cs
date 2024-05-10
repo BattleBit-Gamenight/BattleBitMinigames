@@ -22,4 +22,13 @@ public interface PlayerProperties
         public const string Tier = "gungame_tier";
         public const string KillsToNextTier = "gungame_kills_to_next_tier";
     }
+
+    /// <summary>
+    /// Infected player properties
+    /// </summary>
+    public interface IInfectedPlayerProperties
+    {
+        public const string IsInfected = "infected_is_infected";
+        public const string ZombieType = "infected_zombie_type";
+    }
 }

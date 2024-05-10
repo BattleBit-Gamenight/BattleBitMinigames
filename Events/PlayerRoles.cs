@@ -16,7 +16,7 @@ public class PlayerRoles : Event
         return Task.CompletedTask;
     }
 
-    public override Task OnPlayerConnected(BattleBitApiPlayer player)
+    public override Task OnPlayerConnected(BattleBitPlayer player)
     {
         RoleHelper.SetPlayerRoles(player);
 

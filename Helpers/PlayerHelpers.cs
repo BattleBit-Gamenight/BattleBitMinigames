@@ -4,7 +4,7 @@ namespace BattleBitMinigames.Helpers;
 
 public class PlayerHelpers
 {
-    public static void KillPlayerInVehicle(BattleBitApiPlayer player, string messageToPlayer)
+    public static void KillPlayerInVehicle(BattleBitPlayer player, string messageToPlayer)
     {
         if (!player.InVehicle) return;
 

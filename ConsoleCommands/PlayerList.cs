@@ -32,7 +32,7 @@ public class PlayerList : ConsoleCommand
             }
             
             Logger.Info($"Player list (Page {page}/{pages}):");
-            foreach (BattleBitApiPlayer player in Server.AllPlayers.Skip((page - 1) * 10).Take(10))
+            foreach (BattleBitPlayer player in Server.AllPlayers.Skip((page - 1) * 10).Take(10))
             {
                 string position = $"<{player.Position.X.ToString().Replace(",", ".")}, {player.Position.Y.ToString().Replace(",", ".")}, {player.Position.Z.ToString().Replace(",", ".")}>";
                 Logger.Info($"[{Server.AllPlayers.ToList().IndexOf(player) + 1}] - {player.Name} ({player.SteamID}) | {player.Role} | {position}");

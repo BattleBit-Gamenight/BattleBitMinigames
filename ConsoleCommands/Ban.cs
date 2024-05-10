@@ -29,7 +29,7 @@ public class Ban : ConsoleCommand
                 return;
             }
             
-            BattleBitApiPlayer? player = Server.AllPlayers.FirstOrDefault(p => p.SteamID == playerSteamId);
+            BattleBitPlayer? player = Server.AllPlayers.FirstOrDefault(p => p.SteamID == playerSteamId);
             
             if (player == null)
             {

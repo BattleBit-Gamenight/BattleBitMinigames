@@ -3,7 +3,7 @@ using BattleBitAPI;
 using BattleBitMinigames.Enums;
 
 namespace BattleBitMinigames.Api;
-public class BattleBitApiPlayer : Player<BattleBitApiPlayer>
+public class BattleBitPlayer : Player<BattleBitPlayer>
 {
     public bool Debug = false;
     

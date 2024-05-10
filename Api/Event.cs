@@ -19,15 +19,15 @@ public class Event
     {
     }
 
-    public virtual async Task OnPlayerConnected(BattleBitApiPlayer player)
+    public virtual async Task OnPlayerConnected(BattleBitPlayer player)
     {
     }
 
-    public virtual async Task OnPlayerDisconnected(BattleBitApiPlayer player)
+    public virtual async Task OnPlayerDisconnected(BattleBitPlayer player)
     {
     }
 
-    public virtual async Task<bool> OnPlayerTypedMessage(BattleBitApiPlayer player, ChatChannel channel, string msg)
+    public virtual async Task<bool> OnPlayerTypedMessage(BattleBitPlayer player, ChatChannel channel, string msg)
     {
         return true;
     }
@@ -40,66 +40,66 @@ public class Event
     {
     }
 
-    public virtual async Task<bool> OnPlayerRequestingToChangeRole(BattleBitApiPlayer player, GameRole requestedRole)
+    public virtual async Task<bool> OnPlayerRequestingToChangeRole(BattleBitPlayer player, GameRole requestedRole)
     {
         return true;
     }
 
-    public virtual async Task<bool> OnPlayerRequestingToChangeTeam(BattleBitApiPlayer player, Team requestedTeam)
+    public virtual async Task<bool> OnPlayerRequestingToChangeTeam(BattleBitPlayer player, Team requestedTeam)
     {
         return true;
     }
 
-    public virtual async Task OnPlayerChangedRole(BattleBitApiPlayer player, GameRole role)
+    public virtual async Task OnPlayerChangedRole(BattleBitPlayer player, GameRole role)
     {
     }
 
-    public virtual async Task OnPlayerJoinedSquad(BattleBitApiPlayer player, Squad<BattleBitApiPlayer> squad)
+    public virtual async Task OnPlayerJoinedSquad(BattleBitPlayer player, Squad<BattleBitPlayer> squad)
     {
     }
 
-    public virtual async Task OnSquadLeaderChanged(Squad<BattleBitApiPlayer> squad, BattleBitApiPlayer newLeader)
+    public virtual async Task OnSquadLeaderChanged(Squad<BattleBitPlayer> squad, BattleBitPlayer newLeader)
     {
     }
 
-    public virtual async Task OnPlayerLeftSquad(BattleBitApiPlayer player, Squad<BattleBitApiPlayer> squad)
+    public virtual async Task OnPlayerLeftSquad(BattleBitPlayer player, Squad<BattleBitPlayer> squad)
     {
     }
 
-    public virtual async Task OnPlayerChangeTeam(BattleBitApiPlayer player, Team team)
+    public virtual async Task OnPlayerChangeTeam(BattleBitPlayer player, Team team)
     {
     }
 
-    public virtual async Task OnSquadPointsChanged(Squad<BattleBitApiPlayer> squad, int newPoints)
+    public virtual async Task OnSquadPointsChanged(Squad<BattleBitPlayer> squad, int newPoints)
     {
     }
 
-    public virtual async Task<OnPlayerSpawnArguments?> OnPlayerSpawning(BattleBitApiPlayer player, OnPlayerSpawnArguments request)
+    public virtual async Task<OnPlayerSpawnArguments?> OnPlayerSpawning(BattleBitPlayer player, OnPlayerSpawnArguments request)
     {
         return request;
     }
 
-    public virtual async Task OnPlayerSpawned(BattleBitApiPlayer player)
+    public virtual async Task OnPlayerSpawned(BattleBitPlayer player)
     {
     }
 
-    public virtual async Task OnPlayerDied(BattleBitApiPlayer player)
+    public virtual async Task OnPlayerDied(BattleBitPlayer player)
     {
     }
 
-    public virtual async Task OnPlayerGivenUp(BattleBitApiPlayer player)
+    public virtual async Task OnPlayerGivenUp(BattleBitPlayer player)
     {
     }
 
-    public virtual async Task OnAPlayerDownedAnotherPlayer(OnPlayerKillArguments<BattleBitApiPlayer> args)
+    public virtual async Task OnAPlayerDownedAnotherPlayer(OnPlayerKillArguments<BattleBitPlayer> args)
     {
     }
 
-    public virtual async Task OnAPlayerRevivedAnotherPlayer(BattleBitApiPlayer from, BattleBitApiPlayer to)
+    public virtual async Task OnAPlayerRevivedAnotherPlayer(BattleBitPlayer from, BattleBitPlayer to)
     {
     }
 
-    public virtual async Task OnPlayerReported(BattleBitApiPlayer from, BattleBitApiPlayer to, ReportReason reason,
+    public virtual async Task OnPlayerReported(BattleBitPlayer from, BattleBitPlayer to, ReportReason reason,
         string additional)
     {
     }

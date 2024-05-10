@@ -10,11 +10,11 @@ public class ChatCommand : Attribute
     public string Description { get; }
     public string Usage { get; }
     public PlayerRoles MinimumRequiredRole { get; set; }
-    public Action<string[], BattleBitApiPlayer>? Action { get; set; }
+    public Action<string[], BattleBitPlayer>? Action { get; set; }
     protected BattleBitServer Server { get; set; }
     protected  ILog Logger => Program.Logger;
         
-    protected ChatCommand(string name, string description, string usage = "", PlayerRoles minimumRequiredRole = PlayerRoles.Default ,Action<string[], BattleBitApiPlayer>? action = null)
+    protected ChatCommand(string name, string description, string usage = "", PlayerRoles minimumRequiredRole = PlayerRoles.Default ,Action<string[], BattleBitPlayer>? action = null)
     {
         Name = name;
         Description = description;
@@ -29,7 +29,7 @@ public class ChatCommand : Attribute
         return $"{Name} - {Description}";
     }
     
-    public bool CanExecute(BattleBitApiPlayer player)
+    public bool CanExecute(BattleBitPlayer player)
     {
         return player.PlayerRoles.Any(role => role >= MinimumRequiredRole);
     }

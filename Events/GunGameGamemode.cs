@@ -19,17 +19,17 @@ public class GunGameGamemode : Event
     // Game Logic
     readonly Random _random = new();
     
-    private int GetPlayerTier(BattleBitApiPlayer player)
+    private int GetPlayerTier(BattleBitPlayer player)
     {
         return player.GetPlayerProperty(PlayerProperties.IGunGamePlayerProperties.Tier) == string.Empty ? 0 : int.Parse(player.GetPlayerProperty("tier"));
     }
     
-    private void SetPlayerTier(BattleBitApiPlayer player, int tier)
+    private void SetPlayerTier(BattleBitPlayer player, int tier)
     {
         player.SetPlayerProperty(PlayerProperties.IGunGamePlayerProperties.Tier, tier.ToString());
     }
     
-    private void IncrementPlayerTier(BattleBitApiPlayer player)
+    private void IncrementPlayerTier(BattleBitPlayer player)
     {
         var tier = GetPlayerTier(player);
         player.SetPlayerProperty(PlayerProperties.IGunGamePlayerProperties.Tier, (tier + 1).ToString());
@@ -47,14 +47,14 @@ public class GunGameGamemode : Event
         Server.SayToAllChat("Gun Game has started! The first player to get 2 kills with every weapon wins!");
     }
 
-    public override Task OnPlayerJoinedSquad(BattleBitApiPlayer player, Squad<BattleBitApiPlayer> squad)
+    public override Task OnPlayerJoinedSquad(BattleBitPlayer player, Squad<BattleBitPlayer> squad)
     {
         player.KickFromSquad();
         player.SayToChat("You cannot join a squad in Gun Game.");
         return Task.CompletedTask;
     }
 
-    public override Task<bool> OnPlayerRequestingToChangeRole(BattleBitApiPlayer player, GameRole requestedRole)
+    public override Task<bool> OnPlayerRequestingToChangeRole(BattleBitPlayer player, GameRole requestedRole)
     {
         if (requestedRole != GameRole.Assault)
             player.SetNewRole(GameRole.Assault);
@@ -62,7 +62,7 @@ public class GunGameGamemode : Event
         return Task.FromResult(true);
     }
 
-    public override async Task<OnPlayerSpawnArguments?> OnPlayerSpawning(BattleBitApiPlayer player,
+    public override async Task<OnPlayerSpawnArguments?> OnPlayerSpawning(BattleBitPlayer player,
         OnPlayerSpawnArguments request)
     {
         player.SetNewRole(GameRole.Assault);

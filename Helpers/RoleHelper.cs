@@ -6,7 +6,8 @@ public class RoleHelper
 {
     public static List<ulong> Admins = new()
     {
-        76561198395073327
+        76561198395073327,
+        76561198035784951
     };
 
     public static List<ulong> Moderators = new() { };
@@ -15,7 +16,7 @@ public class RoleHelper
     
     public static List<ulong> Specials = new() { };
     
-    public static void SetPlayerRoles(BattleBitApiPlayer player)
+    public static void SetPlayerRoles(BattleBitPlayer player)
     {
         if (Admins.Contains(player.SteamID))
         {

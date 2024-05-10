@@ -5,7 +5,7 @@ namespace BattleBitMinigames.Handlers;
 
 public class ChatCommandHandler
 {
-    public static Task<bool> Run(string message, BattleBitApiPlayer player)
+    public static Task<bool> Run(string message, BattleBitPlayer player)
     {
         string chatCommandPrefix = Program.ServerConfiguration.ChatCommandPrefix ?? "!";
         if (!message.StartsWith(chatCommandPrefix)) return Task.FromResult(true);

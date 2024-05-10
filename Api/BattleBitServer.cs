@@ -7,7 +7,7 @@ using ServerSettings = BattleBitMinigames.Events.ServerSettings;
 
 namespace BattleBitMinigames.Api;
 
-public class BattleBitServer : GameServer<BattleBitApiPlayer>
+public class BattleBitServer : GameServer<BattleBitPlayer>
 {
     private readonly List<Event> events = new();
     
@@ -16,7 +16,9 @@ public class BattleBitServer : GameServer<BattleBitApiPlayer>
         //AddEvent(new ServerSettings(), this);
         AddEvent(new PlayerRoles(), this);
         AddEvent(new ChatCommandListener(), this);
-        AddEvent(new HideAndSeekGamemode(), this);
+        AddEvent(new RegionManager(), this);
+        // AddEvent(new ZombiesGamemode(), this);
+        //AddEvent(new HideAndSeekGamemode(), this);
         //AddEvent(new GunGameGamemode(), this);
     }
     
@@ -61,19 +63,19 @@ public class BattleBitServer : GameServer<BattleBitApiPlayer>
             await @event.OnDisconnected();
     }
 
-    public override async Task OnPlayerConnected(BattleBitApiPlayer player)
+    public override async Task OnPlayerConnected(BattleBitPlayer player)
     {
         foreach (var @event in events)
             await @event.OnPlayerConnected(player);
     }
 
-    public override async Task OnPlayerDisconnected(BattleBitApiPlayer player)
+    public override async Task OnPlayerDisconnected(BattleBitPlayer player)
     {
         foreach (var @event in events)
             await @event.OnPlayerDisconnected(player);
     }
 
-    public override async Task<bool> OnPlayerTypedMessage(BattleBitApiPlayer player, ChatChannel channel, string msg)
+    public override async Task<bool> OnPlayerTypedMessage(BattleBitPlayer player, ChatChannel channel, string msg)
     {
         return await RunEventWithBoolReturn(@event => @event.OnPlayerTypedMessage(player, channel, msg));
     }
@@ -90,89 +92,89 @@ public class BattleBitServer : GameServer<BattleBitApiPlayer>
             await @event.OnSavePlayerStats(steamID, stats);
     }
 
-    public override async Task<bool> OnPlayerRequestingToChangeRole(BattleBitApiPlayer player, GameRole requestedRole)
+    public override async Task<bool> OnPlayerRequestingToChangeRole(BattleBitPlayer player, GameRole requestedRole)
     {
         return await RunEventWithBoolReturn(@event => @event.OnPlayerRequestingToChangeRole(player, requestedRole));
     }
 
-    public override async Task<bool> OnPlayerRequestingToChangeTeam(BattleBitApiPlayer player, Team requestedTeam)
+    public override async Task<bool> OnPlayerRequestingToChangeTeam(BattleBitPlayer player, Team requestedTeam)
     {
         return await RunEventWithBoolReturn(@event => @event.OnPlayerRequestingToChangeTeam(player, requestedTeam));
     }
 
-    public override async Task OnPlayerChangedRole(BattleBitApiPlayer player, GameRole role)
+    public override async Task OnPlayerChangedRole(BattleBitPlayer player, GameRole role)
     {
         foreach (var @event in events)
             await @event.OnPlayerChangedRole(player, role);
     }
 
-    public override async Task OnPlayerJoinedSquad(BattleBitApiPlayer player, Squad<BattleBitApiPlayer> squad)
+    public override async Task OnPlayerJoinedSquad(BattleBitPlayer player, Squad<BattleBitPlayer> squad)
     {
         foreach (var @event in events)
             await @event.OnPlayerJoinedSquad(player, squad);
     }
 
-    public override async Task OnSquadLeaderChanged(Squad<BattleBitApiPlayer> squad, BattleBitApiPlayer newLeader)
+    public override async Task OnSquadLeaderChanged(Squad<BattleBitPlayer> squad, BattleBitPlayer newLeader)
     {
         foreach (var @event in events)
             await @event.OnSquadLeaderChanged(squad, newLeader);
     }
 
-    public override async Task OnPlayerLeftSquad(BattleBitApiPlayer player, Squad<BattleBitApiPlayer> squad)
+    public override async Task OnPlayerLeftSquad(BattleBitPlayer player, Squad<BattleBitPlayer> squad)
     {
         foreach (var @event in events)
             await @event.OnPlayerLeftSquad(player, squad);
     }
     
-    public override async Task OnPlayerChangeTeam(BattleBitApiPlayer player, Team team)
+    public override async Task OnPlayerChangeTeam(BattleBitPlayer player, Team team)
     {
         foreach (var @event in events)
             await @event.OnPlayerChangeTeam(player, team);
     }
     
-    public override async Task OnSquadPointsChanged(Squad<BattleBitApiPlayer> squad, int newPoints)
+    public override async Task OnSquadPointsChanged(Squad<BattleBitPlayer> squad, int newPoints)
     {
         foreach (var @event in events)
             await @event.OnSquadPointsChanged(squad, newPoints);
     }
     
-    public override async Task<OnPlayerSpawnArguments?> OnPlayerSpawning(BattleBitApiPlayer player, OnPlayerSpawnArguments request)
+    public override async Task<OnPlayerSpawnArguments?> OnPlayerSpawning(BattleBitPlayer player, OnPlayerSpawnArguments request)
     {
         var returnRequest = await RunEventWithOnPlayerSpawnArgumentsReturn((@event, oldRequest) => @event.OnPlayerSpawning(player, oldRequest), request);
         return returnRequest;
     }
     
-    public override async Task OnPlayerSpawned(BattleBitApiPlayer player)
+    public override async Task OnPlayerSpawned(BattleBitPlayer player)
     {
         foreach (var @event in events)
             await @event.OnPlayerSpawned(player);
     }
     
-    public override async Task OnPlayerDied(BattleBitApiPlayer player)
+    public override async Task OnPlayerDied(BattleBitPlayer player)
     {
         foreach (var @event in events)
             await @event.OnPlayerDied(player);
     }
     
-    public override async Task OnPlayerGivenUp(BattleBitApiPlayer player)
+    public override async Task OnPlayerGivenUp(BattleBitPlayer player)
     {
         foreach (var @event in events)
             await @event.OnPlayerGivenUp(player);
     }
     
-    public override async Task OnAPlayerDownedAnotherPlayer(OnPlayerKillArguments<BattleBitApiPlayer> args)
+    public override async Task OnAPlayerDownedAnotherPlayer(OnPlayerKillArguments<BattleBitPlayer> args)
     {
         foreach (var @event in events)
             await @event.OnAPlayerDownedAnotherPlayer(args);
     }
     
-    public override async Task OnAPlayerRevivedAnotherPlayer(BattleBitApiPlayer from, BattleBitApiPlayer to)
+    public override async Task OnAPlayerRevivedAnotherPlayer(BattleBitPlayer from, BattleBitPlayer to)
     {
         foreach (var @event in events)
             await @event.OnAPlayerRevivedAnotherPlayer(from, to);
     }
     
-    public override async Task OnPlayerReported(BattleBitApiPlayer from, BattleBitApiPlayer to, ReportReason reason, string additional)
+    public override async Task OnPlayerReported(BattleBitPlayer from, BattleBitPlayer to, ReportReason reason, string additional)
     {
         foreach (var @event in events)
             await @event.OnPlayerReported(from, to, reason, additional);

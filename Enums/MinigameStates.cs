@@ -8,3 +8,13 @@ public enum MinigameStates
     Running,
     Ending
 }
+
+public enum InfectedGameStates
+{
+    WaitingForPlayers,
+    Starting,
+    SelectingInfected,
+    HumanPrepTime,
+    Running,
+    Ending
+}

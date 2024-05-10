@@ -17,9 +17,9 @@ public class HideAndSeekGamemode : Event
     private int SelectingSeekersDuration { get; set; } = 30;
     
     // HIDER SETTINGS
-    private float HiderRunSpeedMultiplierDuringCountdown { get; set; } = 2.0f;
+    private float HiderRunSpeedMultiplierDuringCountdown { get; set; } = 1.5f;
     private float HiderRunSpeedMultiplierDuringGame { get; set; } = 0.6f;
-    private float HiderJumpHeightMultiplierDuringCountdown { get; set; } = 2.0f;
+    private float HiderJumpHeightMultiplierDuringCountdown { get; set; } = 1.5f;
     private float HiderJumpHeightMultiplierDuringGame { get; set; } = 1.0f;
     private float HiderFallDamageMultiplier { get; set; } = 0.0f;
     private float HiderGiveDamageMultiplier { get; set; } = 0.0f;
@@ -38,33 +38,33 @@ public class HideAndSeekGamemode : Event
     // Game Logic
     readonly Random _random = new();
     
-    private static bool IsPlayerSeeking(BattleBitApiPlayer player)
+    private static bool IsPlayerSeeking(BattleBitPlayer player)
     {
         var value = player.GetPlayerProperty(PlayerProperties.IHideAndSeekPlayerProperties.IsSeeking);
         return value != string.Empty && value != "false";
     }
     
-    private static int GetPlayerHidersFound(BattleBitApiPlayer player)
+    private static int GetPlayerHidersFound(BattleBitPlayer player)
     {
         var value = player.GetPlayerProperty(PlayerProperties.IHideAndSeekPlayerProperties.HidersFound);
         return value != string.Empty ? int.Parse(value) : 0;
     }
     
-    private static void AddPlayerHidersFound(BattleBitApiPlayer player)
+    private static void AddPlayerHidersFound(BattleBitPlayer player)
     {
         var hidersFound = GetPlayerHidersFound(player);
         player.SetPlayerProperty(PlayerProperties.IHideAndSeekPlayerProperties.HidersFound, (hidersFound + 1).ToString());
         Program.Logger.Info($"{player.Name} has found {hidersFound + 1} hiders!");
     }
     
-    private static void MakePlayerSeeker(BattleBitApiPlayer player)
+    private static void MakePlayerSeeker(BattleBitPlayer player)
     {
         player.SetPlayerProperty(PlayerProperties.IHideAndSeekPlayerProperties.IsSeeking, "true");
         player.ChangeTeam(Team.TeamA);
         Program.Logger.Info($"{player.Name} is now a seeker!");
     }
     
-    private static void MakePlayerHider(BattleBitApiPlayer player)
+    private static void MakePlayerHider(BattleBitPlayer player)
     {
         player.SetPlayerProperty(PlayerProperties.IHideAndSeekPlayerProperties.IsSeeking, "false");
         player.ChangeTeam(Team.TeamB);
@@ -72,7 +72,7 @@ public class HideAndSeekGamemode : Event
     }
     
     // Set default values for the hide and seek player properties
-    private static void SetDefaultPlayerProperties(BattleBitApiPlayer player)
+    private static void SetDefaultPlayerProperties(BattleBitPlayer player)
     {
         player.SetPlayerProperty(PlayerProperties.IHideAndSeekPlayerProperties.IsSeeking, "false");
         player.SetPlayerProperty(PlayerProperties.IHideAndSeekPlayerProperties.SeekingMeter, "NO LIFE DETECTED (300m+)");
@@ -80,7 +80,7 @@ public class HideAndSeekGamemode : Event
         Program.Logger.Info($"Set default properties for {player.Name}");
     }
     
-    private static void ClearPlayerProperties(BattleBitApiPlayer player)
+    private static void ClearPlayerProperties(BattleBitPlayer player)
     {
         player.RemovePlayerProperty(PlayerProperties.IHideAndSeekPlayerProperties.IsSeeking);
         player.RemovePlayerProperty(PlayerProperties.IHideAndSeekPlayerProperties.SeekingMeter);
@@ -451,17 +451,22 @@ public class HideAndSeekGamemode : Event
         }
     }
 
-    public override Task OnPlayerJoinedSquad(BattleBitApiPlayer player, Squad<BattleBitApiPlayer> squad)
+    public override Task OnPlayerJoinedSquad(BattleBitPlayer player, Squad<BattleBitPlayer> squad)
     {
         player.KickFromSquad();
         return Task.CompletedTask;
     }
 
-    public override Task OnPlayerChangeTeam(BattleBitApiPlayer player, Team team)
+    public override Task OnPlayerChangeTeam(BattleBitPlayer player, Team team)
     {
         player.Modifications.CanSpectate = false;
         if (State is MinigameStates.Running or MinigameStates.CountingDown)
         {
+            if (State == MinigameStates.CountingDown)
+            {
+                player.Modifications.CanDeploy = false;
+            }
+            
             MakePlayerSeeker(player);
         
             var totalHiders = Server.AllPlayers.Count(hiderPlayer => !IsPlayerSeeking(hiderPlayer));
@@ -475,7 +480,7 @@ public class HideAndSeekGamemode : Event
         return Task.CompletedTask;
     }
 
-    /*public override Task<bool> OnPlayerTypedMessage(BattleBitApiPlayer player, ChatChannel channel, string msg)
+    /*public override Task<bool> OnPlayerTypedMessage(BattleBitPlayer player, ChatChannel channel, string msg)
     {
         if (msg == "start")
         {
@@ -487,7 +492,7 @@ public class HideAndSeekGamemode : Event
         return Task.FromResult(true);
     }*/
 
-    public override async Task<OnPlayerSpawnArguments?> OnPlayerSpawning(BattleBitApiPlayer player,
+    public override async Task<OnPlayerSpawnArguments?> OnPlayerSpawning(BattleBitPlayer player,
         OnPlayerSpawnArguments request)
     {
         if (IsPlayerSeeking(player))
@@ -531,7 +536,7 @@ public class HideAndSeekGamemode : Event
         return request;
     }
 
-    public override async Task OnPlayerSpawned(BattleBitApiPlayer player)
+    public override async Task OnPlayerSpawned(BattleBitPlayer player)
     {
         await Task.Delay(100);
         player.Modifications.RespawnTime = 0.0f;
@@ -552,7 +557,7 @@ public class HideAndSeekGamemode : Event
         }
     }
 
-    public override Task OnAPlayerDownedAnotherPlayer(OnPlayerKillArguments<BattleBitApiPlayer> args)
+    public override Task OnAPlayerDownedAnotherPlayer(OnPlayerKillArguments<BattleBitPlayer> args)
     {
         var killer = args.Killer;
         var victim = args.Victim;
@@ -588,7 +593,7 @@ public class HideAndSeekGamemode : Event
             "Frugis",
             "Isle",
             "Kodiak",
-            "Lonovo",
+            "LonovoRegions",
             "Multuislands",
             "Namak",
             "Oildunes",
@@ -617,7 +622,7 @@ public class HideAndSeekGamemode : Event
         return Task.CompletedTask;
     }
 
-    public override Task OnPlayerDisconnected(BattleBitApiPlayer player)
+    public override Task OnPlayerDisconnected(BattleBitPlayer player)
     {
         var totalHiders = Server.AllPlayers.Count(player => !IsPlayerSeeking(player));
         if (totalHiders == 0 && State == MinigameStates.Running)
@@ -630,7 +635,7 @@ public class HideAndSeekGamemode : Event
         return Task.CompletedTask;
     }
 
-    public override async Task OnPlayerConnected(BattleBitApiPlayer player)
+    public override async Task OnPlayerConnected(BattleBitPlayer player)
     {
         player.Modifications.CanSpectate = false;
         player.Modifications.CaptureFlagSpeedMultiplier = 0.0f;

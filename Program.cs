@@ -172,7 +172,7 @@ internal class Program
     {
         Logger.Info("Starting server listener...");
         
-        var listener = new ServerListener<BattleBitApiPlayer, BattleBitServer>();
+        var listener = new ServerListener<BattleBitPlayer, BattleBitServer>();
         
         listener.OnCreatingGameServerInstance += InitializeServer;
         listener.OnGameServerDisconnected = OnGameServerDisconnected;
@@ -203,14 +203,14 @@ internal class Program
         Server = null!;
     }
 
-    private static async Task OnGameServerDisconnected(GameServer<BattleBitApiPlayer> server)
+    private static async Task OnGameServerDisconnected(GameServer<BattleBitPlayer> server)
     {
         Logger.Warn("Server disconnected. Unloading server...");
         await Task.Delay(1000);
         UnloadServer();
     }
     
-    private static async Task OnGameServerConnected(GameServer<BattleBitApiPlayer> server)
+    private static async Task OnGameServerConnected(GameServer<BattleBitPlayer> server)
     {
         Logger.Info("Server connected.");
         Server = (BattleBitServer) server;
