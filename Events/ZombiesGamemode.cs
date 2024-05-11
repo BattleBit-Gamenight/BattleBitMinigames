@@ -102,7 +102,7 @@ public class ZombiesGamemode : Event
         loadingScreen.AppendLine(
             "The infection has spread across the world, and you are one of the few survivors left.");
         loadingScreen.AppendLine(
-            "You must work together to survive the infected and make it out alive!");
+            "You must work together to survive the infection and make it out alive!");
         loadingScreen.AppendLine(" ");
         loadingScreen.AppendLine($"{RichTextHelper.Bold(true)}{RichTextHelper.Size(150)}Zombie Types:{RichTextHelper.Size(100)}{RichTextHelper.Bold(false)}");
         loadingScreen.AppendLine($"{RichTextHelper.Bold(true)}{RichTextHelper.Size(125)}Normal{RichTextHelper.Size(100)}{RichTextHelper.Bold(false)} - A standard zombie that's slightly faster than a human.");
