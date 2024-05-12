@@ -10,7 +10,7 @@ namespace BattleBitMinigames.Events;
 public class ZombiesGamemode : Event
 {
     // GAMEMODE SETTINGS
-    private int RequiredPlayerCountToStart { get; set; } = 1;
+    private int RequiredPlayerCountToStart { get; set; } = 4;
     private int SelectingInfectedDuration { get; set; } = 60;
     private int HumanPrepTimeDuration { get; set; } = 90;
     
@@ -49,13 +49,18 @@ public class ZombiesGamemode : Event
         return Math.Clamp(Server.CurrentPlayerCount / 16, 1, 8);
     }
 
-    private static void InfectPlayer(BattleBitPlayer player)
+    private void InfectPlayer(BattleBitPlayer player)
     {
         Program.Logger.Info($"Infecting player {player.Name}");
         
         player.Kill();
         player.SetPlayerProperty(PlayerProperties.IInfectedPlayerProperties.IsInfected, "true");
         player.ChangeTeam(Team.TeamB);
+
+        if (State != InfectedGameStates.Running)
+        {
+            player.Modifications.CanDeploy = false;
+        }
     }
     
     private static void CurePlayer(BattleBitPlayer player)
