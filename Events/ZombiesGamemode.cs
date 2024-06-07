@@ -44,6 +44,11 @@ public class ZombiesGamemode : Event
         });
     }
 
+    public override Task<bool> OnPlayerRequestingToChangeRole(BattleBitPlayer player, GameRole requestedRole)
+    {
+        return !IsPlayerInfected(player) ? Task.FromResult(requestedRole != GameRole.Support) : Task.FromResult(true);
+    }
+
     private int AmountOfPlayersToInfectAtStart()
     {
         return Math.Clamp(Server.CurrentPlayerCount / 16, 1, 8);
