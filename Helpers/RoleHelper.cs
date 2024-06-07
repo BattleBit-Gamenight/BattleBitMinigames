@@ -10,7 +10,14 @@ public class RoleHelper
         76561198035784951
     };
 
-    public static List<ulong> Moderators = new() { };
+    public static List<ulong> Moderators = new()
+    {
+        76561198173566107,
+        76561198051546518,
+        76561199056414354,
+        76561198833659544,
+        286535187884408832
+    };
     
     public static List<ulong> Vips = new() { };
     
