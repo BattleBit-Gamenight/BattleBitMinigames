@@ -459,6 +459,18 @@ public class ZombiesGamemode : Event
         return Task.CompletedTask;
     }
 
+    public override Task OnPlayerDied(BattleBitPlayer player)
+    {
+        if (IsPlayerInfected(player)) return base.OnPlayerDied(player);
+        
+        Server.SayToAllChat($"{player.Name} has infected themselves!");
+        InfectPlayer(player);
+        CheckForWinConditions();
+        UpdateAllPlayerSideMessages();
+
+        return base.OnPlayerDied(player);
+    }
+
     public override Task OnPlayerDisconnected(BattleBitPlayer player)
     {
         // Check if there are no humans left
@@ -611,7 +623,7 @@ public class ZombiesGamemode : Event
             {
                 // Player settings
                 player.SetPlayerProperty(PlayerProperties.IInfectedPlayerProperties.ZombieType, "fast");
-                player.Modifications.ReceiveDamageMultiplier = 1.2f;
+                player.Modifications.ReceiveDamageMultiplier = 0.95f;
                 player.Modifications.RunningSpeedMultiplier = 1.3f;
                 player.Modifications.JumpHeightMultiplier = 1.1f;
                 player.Modifications.IsExposedOnMap = true;
@@ -629,9 +641,9 @@ public class ZombiesGamemode : Event
             {
                 // Player settings
                 player.SetPlayerProperty(PlayerProperties.IInfectedPlayerProperties.ZombieType, "leaper");
-                player.Modifications.RunningSpeedMultiplier = 1.3f;
+                player.Modifications.RunningSpeedMultiplier = 1.1f;
                 player.Modifications.JumpHeightMultiplier = 2f;
-                player.Modifications.ReceiveDamageMultiplier = 1.1f;
+                player.Modifications.ReceiveDamageMultiplier = 0.7f;
                 player.Modifications.IsExposedOnMap = true;
                 
                 // Player wearings
@@ -648,7 +660,7 @@ public class ZombiesGamemode : Event
                 // Player settings
                 player.SetPlayerProperty(PlayerProperties.IInfectedPlayerProperties.ZombieType, "boomer");
                 player.Modifications.RunningSpeedMultiplier = 1.2f;
-                player.Modifications.ReceiveDamageMultiplier = 1.3f;
+                player.Modifications.ReceiveDamageMultiplier = 0.7f;
                 player.Modifications.IsExposedOnMap = true;
                 
                 // Player loadout
@@ -668,7 +680,7 @@ public class ZombiesGamemode : Event
             {
                 // Player settings
                 player.SetPlayerProperty(PlayerProperties.IInfectedPlayerProperties.ZombieType, "tank");
-                player.Modifications.ReceiveDamageMultiplier = 0.5f;
+                player.Modifications.ReceiveDamageMultiplier = 0.45f;
                 player.Modifications.RunningSpeedMultiplier = 0.75f;
                 player.Modifications.IsExposedOnMap = true;
                 
