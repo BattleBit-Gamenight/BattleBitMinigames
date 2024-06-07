@@ -18,6 +18,7 @@ public class ChatCommandList
         new SendAnnouncement(),
         new CustomGamemode(),
         new GamemodeRotation(),
-        new MapRotation()
+        new MapRotation(),
+        new KillCommand()
     };
 }
