@@ -7,6 +7,7 @@ using BattleBitAPI.Common;
 using BattleBitAPI.Server;
 using BattleBitMinigames.Api;
 using BattleBitMinigames.Handlers;
+using BattleBitMinigames.Helpers;
 using log4net;
 using log4net.Config;
 using Microsoft.Extensions.Configuration;
@@ -137,6 +138,52 @@ internal class Program
             .Build()
             .Bind(ServerConfiguration);
     }
+    
+    public static void SaveConfiguration(Configuration.ServerConfiguration serverConfigurationToSave)
+    {
+        File.WriteAllText("appsettings.json", JsonSerializer.Serialize(serverConfigurationToSave, JsonOptions));
+    }
+    
+    public static void ReloadConfiguration()
+    {
+        foreach (var Map in Server.MapRotation.GetMapRotation())
+        {
+            Server.MapRotation.RemoveFromRotation(Map);
+        }
+        
+        foreach (var Gamemode in Server.GamemodeRotation.GetGamemodeRotation())
+        {
+            Server.GamemodeRotation.RemoveFromRotation(Gamemode);
+        }
+
+        if (!ServerConfiguration.MapRotation.Any())
+        {
+            ServerConfiguration.MapRotation.Add("AZAGOR");
+            SaveConfiguration(ServerConfiguration);
+        }
+        
+        if (!ServerConfiguration.GamemodeRotation.Any())
+        {
+            ServerConfiguration.GamemodeRotation.Add("CONQ");
+            SaveConfiguration(ServerConfiguration);
+        }
+        
+        foreach (var Map in ServerConfiguration.MapRotation)
+        {
+            Server.MapRotation.AddToRotation(Map);
+        }
+        
+        foreach (var Gamemode in ServerConfiguration.GamemodeRotation)
+        {
+            Server.GamemodeRotation.AddToRotation(Gamemode);
+        }
+        
+        new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json", false, true)
+            .Build()
+            .Bind(ServerConfiguration);
+    }
 
     private void ValidateConfiguration()
     {
@@ -214,8 +261,14 @@ internal class Program
     {
         Logger.Info("Server connected.");
         Server = (BattleBitServer) server;
-        if (ServerConfiguration.Password.Length > 0)
+        if (ServerConfiguration.Password != string.Empty)
             Server.ExecuteCommand("setpass " + ServerConfiguration.Password);
+
+        if (ServerConfiguration.LaunchCustomGamemode != string.Empty)
+        {
+            CustomGamemodeHelper.SetCustomGameMode(ServerConfiguration.LaunchCustomGamemode, Server);
+        }
+        
         await Task.CompletedTask;
     }
 

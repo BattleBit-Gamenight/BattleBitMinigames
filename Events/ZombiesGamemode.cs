@@ -124,15 +124,7 @@ public class ZombiesGamemode : Event
         loadingScreen.AppendLine($"- Do not defend anywhere infected can't access");
         Server.SetLoadingScreenText(loadingScreen.ToString());
         
-        Server.MapRotation.SetRotation(
-            "Construction",
-            "Kodiak",
-            "LonovoRegions",
-            "SandySunset",
-            "TensaTown",
-            "WineParadise",
-            "Zalfibay"
-        );
+        Server.GamemodeRotation.ClearRotation();
         Server.GamemodeRotation.SetRotation("DOMI");
         Server.ExecuteCommand("setsize ultra");
         Server.ExecuteCommand("setspeedhackdetection false");
@@ -170,7 +162,7 @@ public class ZombiesGamemode : Event
         {
             try
             {
-               squad.SquadPoints = 100000;
+               squad.SquadPoints = 200;
             }
             catch (Exception e)
             {
@@ -183,7 +175,7 @@ public class ZombiesGamemode : Event
         {
             try
             {
-                squad.SquadPoints = 1000;
+                squad.SquadPoints = 0;
             }
             catch (Exception e)
             {
@@ -274,7 +266,7 @@ public class ZombiesGamemode : Event
         
         await Task.Delay(1000);
         
-        // Check if count of alive players on team a is 0
+        // Check if count of alive players on team A is 0
         if (Server.AllPlayers.Count(p => p.Team == Team.TeamA && p.IsAlive) == 0)
         {
             Server.AnnounceShort("The infected have won!");
@@ -450,7 +442,7 @@ public class ZombiesGamemode : Event
         
         if (IsPlayerInfected(killer))
         {
-            killer.Squad.SquadPoints += 10000;
+            killer.Squad.SquadPoints += 1000;
             Server.SayToAllChat($"{killer.Name} has infected {victim.Name}!");
             InfectPlayer(victim);
             IncrementPlayerKillsAsInfected(killer);
@@ -458,7 +450,7 @@ public class ZombiesGamemode : Event
         }
         else
         {
-            killer.Squad.SquadPoints += 250;
+            killer.Squad.SquadPoints += 20;
             IncrementPlayerKillsAsHuman(killer);
         }
         
@@ -589,7 +581,6 @@ public class ZombiesGamemode : Event
             request.Wearings = PlayerOutfits.Zombie;
             
             // Set default infected loadout
-            request.Loadout.HeavyGadget = Gadgets.SledgeHammer;
             // Random 50% chance to get grapple
             if (_random.Next(100) < 50)
             {
@@ -601,6 +592,8 @@ public class ZombiesGamemode : Event
                 request.Loadout.ThrowableExtra = 1;
             }
             
+            request.Loadout.HeavyGadget = Gadgets.SledgeHammer;
+            
             // Randomly become either a normal zombie (80% chance), fast zombie (5% chance), leaper zombie (5% chance), boomer zombie (5% chance), or tank zombie (5% chance)
             var random = _random.Next(100);
             if (random < 80) // Normal zombie loadout
@@ -609,6 +602,7 @@ public class ZombiesGamemode : Event
                 player.SetPlayerProperty(PlayerProperties.IInfectedPlayerProperties.ZombieType, "normal");
                 player.Modifications.RunningSpeedMultiplier = 1.1f;
                 player.Modifications.JumpHeightMultiplier = 1.1f;
+                player.Modifications.ReceiveDamageMultiplier = 0.85f;
                 
                 // Send server announce log message
                 Server.UILogOnServer($"A normal zombie has spawned!", 3);
@@ -617,7 +611,8 @@ public class ZombiesGamemode : Event
             {
                 // Player settings
                 player.SetPlayerProperty(PlayerProperties.IInfectedPlayerProperties.ZombieType, "fast");
-                player.Modifications.RunningSpeedMultiplier = 1.5f;
+                player.Modifications.ReceiveDamageMultiplier = 1.2f;
+                player.Modifications.RunningSpeedMultiplier = 1.3f;
                 player.Modifications.JumpHeightMultiplier = 1.1f;
                 player.Modifications.IsExposedOnMap = true;
                 
@@ -628,14 +623,15 @@ public class ZombiesGamemode : Event
                 request.Wearings.Head = PlayerOutfits.BlueTeam.Head;
                 
                 // Send server announce log message
-                Server.UILogOnServer($"A fast zombie has spawned!", 6);
+                Server.UILogOnServer("A fast zombie has spawned!", 6);
             }
             else if (random < 90) // Leaper zombie loadout
             {
                 // Player settings
                 player.SetPlayerProperty(PlayerProperties.IInfectedPlayerProperties.ZombieType, "leaper");
-                player.Modifications.RunningSpeedMultiplier = 1.5f;
-                player.Modifications.JumpHeightMultiplier = 5.0f;
+                player.Modifications.RunningSpeedMultiplier = 1.3f;
+                player.Modifications.JumpHeightMultiplier = 2f;
+                player.Modifications.ReceiveDamageMultiplier = 1.1f;
                 player.Modifications.IsExposedOnMap = true;
                 
                 // Player wearings
@@ -651,7 +647,8 @@ public class ZombiesGamemode : Event
             {
                 // Player settings
                 player.SetPlayerProperty(PlayerProperties.IInfectedPlayerProperties.ZombieType, "boomer");
-                player.Modifications.RunningSpeedMultiplier = 1.25f;
+                player.Modifications.RunningSpeedMultiplier = 1.2f;
+                player.Modifications.ReceiveDamageMultiplier = 1.3f;
                 player.Modifications.IsExposedOnMap = true;
                 
                 // Player loadout
@@ -691,7 +688,7 @@ public class ZombiesGamemode : Event
         else
         {
             // Player settings
-            player.Modifications.GiveDamageMultiplier = 0.5f;
+            player.Modifications.GiveDamageMultiplier = 0.9f;
             player.Modifications.ReceiveDamageMultiplier = 0.5f;
             
             // Player loadout

@@ -3,23 +3,22 @@ using BattleBitAPI.Server;
 using BattleBitMinigames.Events;
 using PlayerRoles = BattleBitMinigames.Events.PlayerRoles;
 using PlayerStats = BattleBitAPI.Common.PlayerStats;
-using ServerSettings = BattleBitMinigames.Events.ServerSettings;
 
 namespace BattleBitMinigames.Api;
 
 public class BattleBitServer : GameServer<BattleBitPlayer>
 {
     private readonly List<Event> events = new();
+    private readonly List<Event> defaultEvents = new()
+    {
+        new ServerSettings(),
+        new PlayerRoles(),
+        new ChatCommandListener()
+    };
     
     public BattleBitServer()
     {
-        //AddEvent(new ServerSettings(), this);
-        AddEvent(new PlayerRoles(), this);
-        AddEvent(new ChatCommandListener(), this);
-        //AddEvent(new RegionManager(), this);
-        AddEvent(new ZombiesGamemode(), this);
-        //AddEvent(new HideAndSeekGamemode(), this);
-        //AddEvent(new GunGameGamemode(), this);
+        AddDefaultEvents();
     }
     
     public void ClearAllPlayerProperties()
@@ -30,19 +29,49 @@ public class BattleBitServer : GameServer<BattleBitPlayer>
         }
     }
 
-    private void AddEvent(Event @event, BattleBitServer server)
+    public void AddEvent(Event @event, BattleBitServer server)
     {
-        @event.Server = server;
+        if (events.Contains(@event))
+        {
+            Program.Logger.Info("Event already exists in event list");
+            return;    
+        }
         
+        @event.Server = server;
         events.Add(@event);
+    }
+
+    public void AddEvents(List<Event> addedEvents)
+    {
+        foreach (var @event in addedEvents)
+        {
+            AddEvent(@event, this);
+        }
+    }
+
+    private void AddDefaultEvents()
+    {
+        foreach (Event @event in defaultEvents)
+        {
+            AddEvent(@event, this);
+        }
     }
 
     public void RemoveEvent(Event @event)
     {
         if (!events.Contains(@event))
-            return;
+        {
+            Program.Logger.Info("Event doesn't exist in event list");
+            return;    
+        }
 
         events.Remove(@event);
+    }
+
+    public void ResetEvents()
+    {
+        events.Clear();
+        AddDefaultEvents();
     }
 
     public override async Task OnConnected()
