@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using BattleBitMinigames.Api;
+using BattleBitMinigames.Events;
 
 namespace BattleBitMinigames.Helpers;
 
