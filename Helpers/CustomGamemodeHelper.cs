@@ -32,7 +32,7 @@ public class CustomGamemodeHelper
                     break;
                 case "vip":
                     server.AddEvents(CustomGameModeEvents.VipEvents);
-                    server.ForceEndGame();
+                    //server.ForceEndGame();
                     break;
                 case "hideandseek":
                     server.AddEvents(CustomGameModeEvents.HideAndSeekEvents);

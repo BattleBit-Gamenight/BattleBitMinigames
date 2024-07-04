@@ -12,8 +12,9 @@ public static class CustomGameModeEvents
     };
     
     
-    public  static readonly List<Event> VipEvents = new()
+    public static readonly List<Event> VipEvents = new()
     {
+        new VipGamemode()
     };
     
     public static readonly List<Event> HideAndSeekEvents = new()
