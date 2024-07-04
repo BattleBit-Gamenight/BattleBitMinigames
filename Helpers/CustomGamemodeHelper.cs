@@ -1,5 +1,5 @@
 ﻿using BattleBitMinigames.Api;
-using BattleBitMinigames.Events;
+using BattleBitMinigames.Data;
 
 namespace BattleBitMinigames.Helpers;
 
@@ -8,18 +8,15 @@ public class CustomGamemodeHelper
     private static readonly List<string> validCustomGamemodes = new()
     {
         "zombies",
-        "hideandseek"
+        "vip",
+        "hideandseek",
+        "gungame"
     };
 
     public static bool isValidCustomGamemode(string gm)
     {
         return validCustomGamemodes.Contains(gm.ToLower());
     }
-    
-    private static readonly List<Event> ZombieEvents = new ()
-    {
-        new ZombiesGamemode()
-    };
 
     public static void SetCustomGameMode(string gm, BattleBitServer server)
     {
@@ -30,7 +27,19 @@ public class CustomGamemodeHelper
             switch (gm.ToLower())
             {
                 case "zombies":
-                    server.AddEvents(ZombieEvents);
+                    server.AddEvents(CustomGameModeEvents.ZombieEvents);
+                    server.ForceEndGame();
+                    break;
+                case "vip":
+                    server.AddEvents(CustomGameModeEvents.VipEvents);
+                    server.ForceEndGame();
+                    break;
+                case "hideandseek":
+                    server.AddEvents(CustomGameModeEvents.HideAndSeekEvents);
+                    server.ForceEndGame();
+                    break;
+                case "gungame":
+                    server.AddEvents(CustomGameModeEvents.GunGameEvents);
                     server.ForceEndGame();
                     break;
                 default:
