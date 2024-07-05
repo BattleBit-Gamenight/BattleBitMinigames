@@ -32,8 +32,8 @@ public class VipGamemode : Event
         player.Modifications.FallDamageMultiplier = 0.25f;
         player.Modifications.GiveDamageMultiplier = 0.25f;
         player.Modifications.ReceiveDamageMultiplier = 0.25f;
-        player.KickFromSquad();
         player.Modifications.IsExposedOnMap = true;
+        player.KickFromSquad();
         player.JoinSquad(Squads.King);
     }
     
@@ -67,8 +67,15 @@ public class VipGamemode : Event
                     request.Wearings = PlayerOutfits.BlueTeam;
                     request.Loadout.PrimaryWeapon = new WeaponItem()
                     {
-                        Tool = Weapons.M249
+                        Tool = Weapons.M249,
+                        Barrel = Attachments.Tactical,
+                        MainSight = Attachments.RedDot,
+                        UnderRail = Attachments.BCMGunFighter
                     };
+                    request.Loadout.Throwable = Gadgets.SmokeGrenadeBlue;
+                    request.Loadout.ThrowableExtra = 100;
+                    request.Loadout.PrimaryExtraMagazines = 100;
+                    request.Loadout.SecondaryExtraMagazines = 100;
                 }
                 else
                 {
@@ -83,6 +90,17 @@ public class VipGamemode : Event
                 {
                     SetVipSettings(player);
                     request.Wearings = PlayerOutfits.RedTeam;
+                    request.Loadout.PrimaryWeapon = new WeaponItem()
+                    {
+                        Tool = Weapons.M249,
+                        Barrel = Attachments.Tactical,
+                        MainSight = Attachments.RedDot,
+                        UnderRail = Attachments.BCMGunFighter
+                    };
+                    request.Loadout.Throwable = Gadgets.SmokeGrenadeRed;
+                    request.Loadout.ThrowableExtra = 100;
+                    request.Loadout.PrimaryExtraMagazines = 100;
+                    request.Loadout.SecondaryExtraMagazines = 100;
                 }
                 else
                 {
