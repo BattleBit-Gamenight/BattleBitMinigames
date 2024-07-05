@@ -116,6 +116,28 @@ public class VipGamemode : Event
         
         return request;
     }
+    
+    public override Task OnGameStateChanged(GameState oldState, GameState newState)
+    {
+        switch (newState)
+        {
+            case GameState.Playing:
+                Server.RoundSettings.SecondsLeft = 100000;
+                Server.RoundSettings.TeamATickets = 350;
+                Server.RoundSettings.TeamBTickets = 350;
+                break;
+            case GameState.CountingDown:
+                break;
+            case GameState.WaitingForPlayers:
+                break;
+            case GameState.EndingGame:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(newState), newState, null);
+        }
+
+        return Task.CompletedTask;
+    }
 
     public override Task OnPlayerDied(BattleBitPlayer player)
     {
