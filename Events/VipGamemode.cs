@@ -233,11 +233,10 @@ public class VipGamemode : Event
         }
         
         // If the player is not the VIP, don't let them join the VIP squad
-        if (!IsPlayerVip(player))
-        {
-            player.SayToChat($"{RichTextHelper.FromColorName("Orange")}You can't join the VIP squad.");
-            player.KickFromSquad();
-        }
+        if (IsPlayerVip(player) || squad.Name != Squads.King) return Task.CompletedTask;
+        
+        player.SayToChat($"{RichTextHelper.FromColorName("Orange")}You can't join the VIP squad.");
+        player.KickFromSquad();
 
         return Task.CompletedTask;
     }
