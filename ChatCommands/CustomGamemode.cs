@@ -47,7 +47,7 @@ public class CustomGamemode : ChatCommand
                     }
 
                     var customGamemodeToAdd = string.Join(" ", args).ToUpperInvariant();
-                    if (CustomGamemodeHelper.isValidCustomGamemode(customGamemodeToAdd))
+                    if (CustomGamemodeHelper.IsValidCustomGamemode(customGamemodeToAdd))
                     {
                         CustomGamemodeHelper.SetCustomGameMode(customGamemodeToAdd, Server);
 

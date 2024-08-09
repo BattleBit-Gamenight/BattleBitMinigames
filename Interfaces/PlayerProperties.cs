@@ -33,4 +33,14 @@ public interface PlayerProperties
         public const string KillsAsInfected = "infected_kills_as_infected";
         public const string KillsAsHuman = "infected_kills_as_human";
     }
+    
+    /// <summary>
+    /// VIP player properties
+    /// </summary>
+    public interface IVipPlayerProperties
+    {
+        public const string SpawnedInSpawn = "spawned_in_spawn";
+        public const string SpawnedInSpawnTime = "spawned_in_spawn_time";
+        public const string EnteredSpawnTime = "entered_spawn_time";
+    }
 }

@@ -13,14 +13,14 @@ public class CustomGamemodeHelper
         "gungame"
     };
 
-    public static bool isValidCustomGamemode(string gm)
+    public static bool IsValidCustomGamemode(string gm)
     {
         return validCustomGamemodes.Contains(gm.ToLower());
     }
 
     public static void SetCustomGameMode(string gm, BattleBitServer server)
     {
-        if (isValidCustomGamemode(gm))
+        if (IsValidCustomGamemode(gm))
         {
             server.ResetEvents();
             
@@ -28,19 +28,19 @@ public class CustomGamemodeHelper
             {
                 case "zombies":
                     server.AddEvents(CustomGameModeEvents.ZombieEvents);
-                    server.ForceEndGame();
+                    // server.ForceEndGame();
                     break;
                 case "vip":
                     server.AddEvents(CustomGameModeEvents.VipEvents);
-                    server.ForceEndGame();
+                    // server.ForceEndGame();
                     break;
                 case "hideandseek":
                     server.AddEvents(CustomGameModeEvents.HideAndSeekEvents);
-                    server.ForceEndGame();
+                    // server.ForceEndGame();
                     break;
                 case "gungame":
                     server.AddEvents(CustomGameModeEvents.GunGameEvents);
-                    server.ForceEndGame();
+                    // server.ForceEndGame();
                     break;
                 default:
                     return;

@@ -7,7 +7,8 @@ public class RoleHelper
     public static List<ulong> Admins = new()
     {
         76561198395073327,
-        76561198035784951
+        76561198035784951,
+        76561198855127416
     };
 
     public static List<ulong> Moderators = new()

@@ -8,23 +8,28 @@ namespace BattleBitMinigames.Events;
 public class VipGamemode : Event
 {
     private Random _random = new();
-    private BattleBitPlayer? TeamAVip;
-    private BattleBitPlayer? TeamBVip;
+    private BattleBitPlayer? _teamAVip;
+    private BattleBitPlayer? _teamBVip;
     
     private bool IsPlayerVip(BattleBitPlayer player)
     {
-        return player == TeamAVip || player == TeamBVip;
+        return player == _teamAVip || player == _teamBVip;
     }
     
     private void SetVipSettings(BattleBitPlayer player)
     {
-        if (player.Team == Team.TeamA)
+        switch (player.Team)
         {
-            TeamAVip = player;
-        }
-        else if (player.Team == Team.TeamB)
-        {
-            TeamBVip = player;
+            case Team.TeamA:
+                _teamAVip = player;
+                break;
+            case Team.TeamB:
+                _teamBVip = player;
+                break;
+            case Team.None:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(player));
         }
 
         player.Message($"{RichTextHelper.FromColorName("Gold")}You are the VIP!{RichTextHelper.NewLine()}{RichTextHelper.FromColorName("Orange")}You have reduced damage and fall damage, and you are exposed on the map. {RichTextHelper.FromColorName("Red")}Don't die{RichTextHelper.Color()}!", 10);
@@ -37,7 +42,7 @@ public class VipGamemode : Event
         player.JoinSquad(Squads.King);
     }
     
-    private void SetNonVipSettings(BattleBitPlayer player)
+    private static void SetNonVipSettings(BattleBitPlayer player)
     {
         player.Modifications.IsExposedOnMap = false;
         player.Modifications.FallDamageMultiplier = 1f;
@@ -47,21 +52,21 @@ public class VipGamemode : Event
     
     // TODO: Implement function to increment player point contribution using player properties
     
-    public override async Task<OnPlayerSpawnArguments?> OnPlayerSpawning(BattleBitPlayer player,
+    public override Task<OnPlayerSpawnArguments?> OnPlayerSpawning(BattleBitPlayer player,
         OnPlayerSpawnArguments request)
     {
         if (request.Loadout.HeavyGadget.Name.ToLower().Contains("rpg") || request.Loadout.LightGadget.Name.ToLower().Contains("c4") || request.Loadout.LightGadget.Name.ToLower().Contains("claymore") || request.Loadout.Throwable.Name.ToLower().Contains("impact") || request.Loadout.Throwable.Name.ToLower().Contains("frag"))
         {
             player.SayToChat($"{RichTextHelper.FromColorName("Orange")}You can't use explosives in this gamemode.");
             player.Message($"{RichTextHelper.FromColorName("Orange")}You can't use explosives in this gamemode.", 10);
-            return null;
+            return Task.FromResult<OnPlayerSpawnArguments?>(null);
         }
         
         switch (player.Team)
         {
             case Team.TeamA:
             {
-                if (TeamAVip == null)
+                if (_teamAVip == null)
                 {
                     SetVipSettings(player);
                     request.Wearings = PlayerOutfits.BlueTeam;
@@ -86,7 +91,7 @@ public class VipGamemode : Event
             }
             case Team.TeamB:
             {
-                if (TeamBVip == null)
+                if (_teamBVip == null)
                 {
                     SetVipSettings(player);
                     request.Wearings = PlayerOutfits.RedTeam;
@@ -114,7 +119,7 @@ public class VipGamemode : Event
                 break;
         }
         
-        return request;
+        return Task.FromResult<OnPlayerSpawnArguments?>(request);
     }
     
     public override Task OnGameStateChanged(GameState oldState, GameState newState)
@@ -141,20 +146,25 @@ public class VipGamemode : Event
 
     public override Task OnPlayerDied(BattleBitPlayer player)
     {
-        if (IsPlayerVip(player))
+        if (!IsPlayerVip(player)) return Task.CompletedTask;
+        switch (player.Team)
         {
-            if (player.Team == Team.TeamA)
-            {
+            case Team.TeamA:
                 Server.SayToAllChat($"The VIP {RichTextHelper.FromColorName("Gold")}{player.Name}{RichTextHelper.Color()} took the easy way out (suicided)! {RichTextHelper.FromColorName("RoyalBlue")}US{RichTextHelper.Color()} has lost {RichTextHelper.FromColorName("Crimson")}20 tickets{RichTextHelper.Color()}.");
-                TeamAVip = null;
-            }
-            else if (player.Team == Team.TeamB)
-            {
+                Server.RoundSettings.TeamATickets -= 20;
+                _teamAVip = null;
+                break;
+            case Team.TeamB:
                 Server.SayToAllChat($"The VIP {RichTextHelper.FromColorName("Gold")}{player.Name}{RichTextHelper.Color()} took the easy way out (suicided)! {RichTextHelper.FromColorName("Red")}RU{RichTextHelper.Color()} has lost {RichTextHelper.FromColorName("Crimson")}20 tickets{RichTextHelper.Color()}.");
-                TeamBVip = null;
-            }
+                Server.RoundSettings.TeamBTickets -= 20;
+                _teamBVip = null;
+                break;
+            case Team.None:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(player));
         }
-        
+
         return Task.CompletedTask;
     }
 
@@ -166,47 +176,44 @@ public class VipGamemode : Event
         if (killer == null || victim == null) return Task.CompletedTask;
         if (killer == victim) return Task.CompletedTask;
         
-        if (victim.Team == Team.TeamA)
+        switch (victim.Team)
         {
-            if (IsPlayerVip(victim))
-            {
+            case Team.TeamA when IsPlayerVip(victim):
                 // Give the killer's team 50 tickets for killing the VIP
-                Server.RoundSettings.TeamBTickets += 75;
-                Server.RoundSettings.TeamATickets -= 75;
+                Server.RoundSettings.TeamBTickets += 45;
+                Server.RoundSettings.TeamATickets -= 45;
                 Server.SayToAllChat($"{RichTextHelper.FromColorName("MediumPurple")}{killer.Name}{RichTextHelper.Color()} has killed the VIP ({RichTextHelper.FromColorName("Gold")}{victim.Name}{RichTextHelper.Color()})! {RichTextHelper.FromColorName("Red")}RU{RichTextHelper.Color()} has {RichTextHelper.FromColorName("Orange")}stolen 75 tickets{RichTextHelper.Color()} from {RichTextHelper.FromColorName("RoyalBlue")}US{RichTextHelper.Color()}.");
                 
                 // Remove the VIP from the var
-                TeamAVip = null;
+                _teamAVip = null;
                 
                 // Kill the victim
                 victim.Kill();
-            }
-            else
-            {
+                break;
+            case Team.TeamA:
                 // Give the killer's team 1 ticket for killing a non-VIP player
                 // Server.RoundSettings.TeamBTickets += 1;
-            }
-        } 
-        else if (victim.Team == Team.TeamB)
-        {
-            if (IsPlayerVip(victim))
-            {
+                break;
+            case Team.TeamB when IsPlayerVip(victim):
                 // Give the killer's team 50 tickets for killing the VIP
-                Server.RoundSettings.TeamATickets += 75;
-                Server.RoundSettings.TeamBTickets -= 75;
+                Server.RoundSettings.TeamATickets += 45;
+                Server.RoundSettings.TeamBTickets -= 45;
                 Server.SayToAllChat($"{RichTextHelper.FromColorName("MediumPurple")}{killer.Name}{RichTextHelper.Color()} has killed the VIP ({RichTextHelper.FromColorName("Gold")}{victim.Name}{RichTextHelper.Color()})! {RichTextHelper.FromColorName("RoyalBlue")}US{RichTextHelper.Color()} has {RichTextHelper.FromColorName("Orange")}stolen 75 tickets{RichTextHelper.Color()} from {RichTextHelper.FromColorName("Red")}RU{RichTextHelper.Color()}.");
                 
                 // Remove the VIP from the var
-                TeamBVip = null;
+                _teamBVip = null;
                 
                 // Kill the victim
                 victim.Kill();
-            }
-            else
-            {
+                break;
+            case Team.TeamB:
                 // Give the killer's team 1 ticket for killing a non-VIP player
                 // Server.RoundSettings.TeamATickets += 1;
-            }
+                break;
+            case Team.None:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(args));
         }
         
         return Task.CompletedTask;
@@ -243,20 +250,23 @@ public class VipGamemode : Event
 
     public override Task OnPlayerDisconnected(BattleBitPlayer player)
     {
-        if (IsPlayerVip(player))
+        if (!IsPlayerVip(player)) return Task.CompletedTask;
+        switch (player.Team)
         {
-            if (player.Team == Team.TeamA)
-            {
+            case Team.TeamA:
                 Server.SayToAllChat($"{RichTextHelper.FromColorName("Gold")}{player.Name}{RichTextHelper.Color()} got scared as VIP and ran away (disconnected)! {RichTextHelper.FromColorName("RoyalBlue")}US{RichTextHelper.Color()} has {RichTextHelper.FromColorName("Crimson")}lost 20 tickets{RichTextHelper.Color()}.");
                 Server.RoundSettings.TeamATickets -= 20;
-                TeamAVip = null;
-            }
-            else if (player.Team == Team.TeamB)
-            {
+                _teamAVip = null;
+                break;
+            case Team.TeamB:
                 Server.SayToAllChat($"{RichTextHelper.FromColorName("Gold")}{player.Name}{RichTextHelper.Color()} got scared as VIP and ran away (disconnected)! {RichTextHelper.FromColorName("Red")}RU{RichTextHelper.Color()} has {RichTextHelper.FromColorName("Crimson")}lost 20 tickets{RichTextHelper.Color()}.");
                 Server.RoundSettings.TeamBTickets -= 20;
-                TeamBVip = null;
-            }
+                _teamBVip = null;
+                break;
+            case Team.None:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(player));
         }
         
         return Task.CompletedTask;

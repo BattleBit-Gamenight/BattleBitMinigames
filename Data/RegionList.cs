@@ -15,6 +15,11 @@ public class RegionList
                 LonovoRegions.TeamASafeZone,
                 LonovoRegions.TeamBSafeZone
             },
+            "WineParadise" => new List<RegionHelper.Region?>
+            {
+              WineparadiseRegions.TeamASafeZone,
+              WineparadiseRegions.TeamBSafeZone
+            },
             _ => new List<RegionHelper.Region?>()
         };
     }

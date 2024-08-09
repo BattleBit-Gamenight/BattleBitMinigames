@@ -33,17 +33,18 @@ internal class Program
         AllowTrailingCommas = true
     };
 
-    private async void StartApi()
+    private void StartApi()
     {
         try
         {
-            SetupLogger();
+            Logger = SetupLogger();
             LoadConfiguration();
             ValidateConfiguration();
             StartServerListener();
         }
         catch (Exception ex)
         {
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
             if (Logger == null)
             {
                 Console.WriteLine("Failed to initialize logger" + Environment.NewLine + ex);
@@ -67,12 +68,12 @@ internal class Program
         }
     } 
 
-    private void SetupLogger()
+    private static ILog SetupLogger()
     {
-        string log4netConfig = "log4net.config";
-        if (!File.Exists(log4netConfig))
+        const string log4NetConfig = "log4net.config";
+        if (!File.Exists(log4NetConfig))
         {
-            File.WriteAllText(log4netConfig, @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+            File.WriteAllText(log4NetConfig, @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <log4net>
     <root>
     <level value=""INFO"" />
@@ -105,7 +106,7 @@ internal class Program
         try
         {
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-            XmlConfigurator.Configure(new FileInfo(log4netConfig));
+            XmlConfigurator.Configure(new FileInfo(log4NetConfig));
         }
         catch (Exception ex)
         {
@@ -115,8 +116,7 @@ internal class Program
         
         try 
         {
-            Logger = LogManager.GetLogger("API");
-            Logger.Info("Logger initialized.");
+            return LogManager.GetLogger("API");
         }
         catch (Exception ex)
         {
@@ -125,7 +125,7 @@ internal class Program
         }
     }
 
-    private void LoadConfiguration()
+    private static void LoadConfiguration()
     {
         if (!File.Exists("appsettings.json"))
         {
@@ -146,14 +146,14 @@ internal class Program
     
     public static void ReloadConfiguration()
     {
-        foreach (var Map in Server.MapRotation.GetMapRotation())
+        foreach (var map in Server.MapRotation.GetMapRotation())
         {
-            Server.MapRotation.RemoveFromRotation(Map);
+            Server.MapRotation.RemoveFromRotation(map);
         }
         
-        foreach (var Gamemode in Server.GamemodeRotation.GetGamemodeRotation())
+        foreach (var gamemode in Server.GamemodeRotation.GetGamemodeRotation())
         {
-            Server.GamemodeRotation.RemoveFromRotation(Gamemode);
+            Server.GamemodeRotation.RemoveFromRotation(gamemode);
         }
 
         if (!ServerConfiguration.MapRotation.Any())
@@ -168,14 +168,14 @@ internal class Program
             SaveConfiguration(ServerConfiguration);
         }
         
-        foreach (var Map in ServerConfiguration.MapRotation)
+        foreach (var map in ServerConfiguration.MapRotation)
         {
-            Server.MapRotation.AddToRotation(Map);
+            Server.MapRotation.AddToRotation(map);
         }
         
-        foreach (var Gamemode in ServerConfiguration.GamemodeRotation)
+        foreach (var gamemode in ServerConfiguration.GamemodeRotation)
         {
-            Server.GamemodeRotation.AddToRotation(Gamemode);
+            Server.GamemodeRotation.AddToRotation(gamemode);
         }
         
         new ConfigurationBuilder()
@@ -185,13 +185,13 @@ internal class Program
             .Bind(ServerConfiguration);
     }
 
-    private void ValidateConfiguration()
+    private static void ValidateConfiguration()
     {
         List<ValidationResult> validationResults = new();
         IPAddress? ipAddress = null;
 
-        bool isValid = Validator.TryValidateObject(ServerConfiguration, new ValidationContext(ServerConfiguration), validationResults, true)
-                       && IPAddress.TryParse(ServerConfiguration.IP, out ipAddress);
+        var isValid = Validator.TryValidateObject(ServerConfiguration, new ValidationContext(ServerConfiguration), validationResults, true)
+                      && IPAddress.TryParse(ServerConfiguration.IP, out ipAddress);
         
         if (ServerConfiguration.Password == "")
         {
@@ -206,7 +206,7 @@ internal class Program
                 errorMessages = errorMessages.Append($"Invalid IP address: {ServerConfiguration.IP}");
             }
 
-            string errorString = $"Invalid configuration:{Environment.NewLine}{string.Join(Environment.NewLine, errorMessages)}";
+            var errorString = $"Invalid configuration:{Environment.NewLine}{string.Join(Environment.NewLine, errorMessages)}";
             throw new ValidationException(errorString);
         }
         
@@ -264,7 +264,7 @@ internal class Program
         if (ServerConfiguration.Password != string.Empty)
             Server.ExecuteCommand("setpass " + ServerConfiguration.Password);
 
-        if (ServerConfiguration.LaunchCustomGamemode != string.Empty)
+        if (ServerConfiguration.LaunchCustomGamemode != string.Empty && Server.RoundSettings.State != GameState.EndingGame)
         {
             CustomGamemodeHelper.SetCustomGameMode(ServerConfiguration.LaunchCustomGamemode, Server);
         }
