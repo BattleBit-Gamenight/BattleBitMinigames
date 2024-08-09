@@ -22,15 +22,6 @@ public class StopServerAndApi : ChatCommand
 
             Program.Logger.Info("Closing Server...");
             Server.StopServer();
-            Server.AnnounceLong("Stopping...");
-
-            while (Server.IsConnected)
-            {
-                Thread.Sleep(1000);
-            }
-            
-            Program.Logger.Info("Quitting API...");
-            Environment.Exit(-1);
         };
     }
 }
