@@ -132,6 +132,7 @@ public class VipGamemode : Event
                 Server.RoundSettings.TeamBTickets = 350;
                 break;
             case GameState.CountingDown:
+                Server.RoundSettings.SecondsLeft = 10;
                 break;
             case GameState.WaitingForPlayers:
                 break;

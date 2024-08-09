@@ -1,4 +1,5 @@
-﻿using BattleBitMinigames.Api;
+﻿using BattleBitAPI.Common;
+using BattleBitMinigames.Api;
 using BattleBitMinigames.Data;
 
 namespace BattleBitMinigames.Helpers;
@@ -23,24 +24,25 @@ public class CustomGamemodeHelper
         if (IsValidCustomGamemode(gm))
         {
             server.ResetEvents();
+            server.SetServerSizeForNextMatch(MapSize._127vs127);
             
             switch (gm.ToLower())
             {
                 case "zombies":
                     server.AddEvents(CustomGameModeEvents.ZombieEvents);
-                    // server.ForceEndGame();
+                    server.ForceEndGame();
                     break;
                 case "vip":
                     server.AddEvents(CustomGameModeEvents.VipEvents);
-                    // server.ForceEndGame();
+                    server.ForceEndGame();
                     break;
                 case "hideandseek":
                     server.AddEvents(CustomGameModeEvents.HideAndSeekEvents);
-                    // server.ForceEndGame();
+                    server.ForceEndGame();
                     break;
                 case "gungame":
                     server.AddEvents(CustomGameModeEvents.GunGameEvents);
-                    // server.ForceEndGame();
+                    server.ForceEndGame();
                     break;
                 default:
                     return;

@@ -1,5 +1,4 @@
-﻿using System.Numerics;
-using BattleBitMinigames.Data.Regions;
+﻿using BattleBitMinigames.Data.Regions;
 using BattleBitMinigames.Handlers;
 
 namespace BattleBitMinigames.Data;
@@ -17,8 +16,8 @@ public class RegionList
             },
             "WineParadise" => new List<RegionHelper.Region?>
             {
-              WineparadiseRegions.TeamASafeZone,
-              WineparadiseRegions.TeamBSafeZone
+              WineParadiseRegions.TeamASafeZone,
+              WineParadiseRegions.TeamBSafeZone
             },
             _ => new List<RegionHelper.Region?>()
         };

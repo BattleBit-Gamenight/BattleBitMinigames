@@ -39,6 +39,7 @@ public interface PlayerProperties
     /// </summary>
     public interface IVipPlayerProperties
     {
+        public const string IsVip = "player_is_vip";
         public const string SpawnedInSpawn = "spawned_in_spawn";
         public const string SpawnedInSpawnTime = "spawned_in_spawn_time";
         public const string EnteredSpawnTime = "entered_spawn_time";

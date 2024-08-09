@@ -3,7 +3,7 @@ using BattleBitMinigames.Handlers;
 
 namespace BattleBitMinigames.Data.Regions;
 
-public class WineparadiseRegions
+public class WineParadiseRegions
 {
     // US safe zone
     public static readonly RegionHelper.Region TeamASafeZone = new (

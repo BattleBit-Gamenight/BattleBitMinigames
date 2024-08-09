@@ -1,4 +1,5 @@
-﻿using BattleBitMinigames.Api;
+﻿using BattleBitAPI.Common;
+using BattleBitMinigames.Api;
 
 namespace BattleBitMinigames.Events;
 
