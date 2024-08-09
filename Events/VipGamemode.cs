@@ -2,6 +2,7 @@
 using BattleBitAPI.Server;
 using BattleBitMinigames.Api;
 using BattleBitMinigames.Helpers;
+using BattleBitMinigames.Interfaces;
 
 namespace BattleBitMinigames.Events;
 
@@ -10,6 +11,8 @@ public class VipGamemode : Event
     private Random _random = new();
     private BattleBitPlayer? _teamAVip;
     private BattleBitPlayer? _teamBVip;
+    private ulong? _lastTeamAVipSteamId;
+    private ulong? _lastTeamBVipSteamId;
     
     private bool IsPlayerVip(BattleBitPlayer player)
     {
@@ -22,9 +25,11 @@ public class VipGamemode : Event
         {
             case Team.TeamA:
                 _teamAVip = player;
+                _lastTeamAVipSteamId = player.SteamID;
                 break;
             case Team.TeamB:
                 _teamBVip = player;
+                _lastTeamBVipSteamId = player.SteamID;
                 break;
             case Team.None:
                 break;
@@ -40,6 +45,7 @@ public class VipGamemode : Event
         player.Modifications.IsExposedOnMap = true;
         player.KickFromSquad();
         player.JoinSquad(Squads.King);
+        player.SetPlayerProperty(PlayerProperties.IVipPlayerProperties.IsVip, "true");
     }
     
     private static void SetNonVipSettings(BattleBitPlayer player)
@@ -48,6 +54,7 @@ public class VipGamemode : Event
         player.Modifications.FallDamageMultiplier = 1f;
         player.Modifications.ReceiveDamageMultiplier = 1f;
         player.Modifications.GiveDamageMultiplier = 1f;
+        player.RemovePlayerProperty(PlayerProperties.IVipPlayerProperties.IsVip);
     }
     
     // TODO: Implement function to increment player point contribution using player properties
@@ -66,7 +73,7 @@ public class VipGamemode : Event
         {
             case Team.TeamA:
             {
-                if (_teamAVip == null)
+                if (_teamAVip == null && _lastTeamAVipSteamId != player.SteamID)
                 {
                     SetVipSettings(player);
                     request.Wearings = PlayerOutfits.BlueTeam;
@@ -91,7 +98,7 @@ public class VipGamemode : Event
             }
             case Team.TeamB:
             {
-                if (_teamBVip == null)
+                if (_teamBVip == null && _lastTeamBVipSteamId != player.SteamID)
                 {
                     SetVipSettings(player);
                     request.Wearings = PlayerOutfits.RedTeam;

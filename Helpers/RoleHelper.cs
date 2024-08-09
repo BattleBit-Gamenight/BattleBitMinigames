@@ -6,18 +6,15 @@ public class RoleHelper
 {
     public static List<ulong> Admins = new()
     {
-        76561198395073327,
-        76561198035784951,
-        76561198855127416
+        76561198395073327, // Bims
+        76561198035784951, // AgentSmith
+        76561198173566107, // Julgers
+        76561198051546518, // Terminal
+        76561199056414354, // Pom
+        76561198833659544 // Silly
     };
 
-    public static List<ulong> Moderators = new()
-    {
-        76561198173566107,
-        76561198051546518,
-        76561199056414354,
-        76561198833659544
-    };
+    public static List<ulong> Moderators = new() { };
     
     public static List<ulong> Vips = new() { };
     

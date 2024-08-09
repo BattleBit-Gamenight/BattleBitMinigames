@@ -31,7 +31,7 @@ public class RegionManager : Event
                         if (Program.ServerConfiguration.LaunchCustomGamemode == "vip")
                         {
                             var isVip = player.GetPlayerProperty(PlayerProperties.IVipPlayerProperties.IsVip);
-                            if (isVip == "" || isVip == "false") continue;
+                            if (isVip != "true") continue;
 
                             var now = DateTime.UtcNow;
                             var spawnedInSpawn =
@@ -51,10 +51,11 @@ public class RegionManager : Event
                                         player.Message($"You spawned in the {region.Name} and stayed for too long!",
                                             15);
                                     }
-                                    else
+                                    else if ((now - spawnedInSpawnTime).TotalSeconds >= 10)
                                     {
                                         player.Message(
-                                            $"You spawned in the {region.Name}, please leave within {(int)(90 - (now - spawnedInSpawnTime).TotalSeconds)} seconds!");
+                                            $"You spawned in the {region.Name}, please leave within {(int)(90 - (now - spawnedInSpawnTime).TotalSeconds)} seconds!",
+                                            1f);
                                     }
                                 }
                             }
@@ -75,7 +76,8 @@ public class RegionManager : Event
                                     else
                                     {
                                         player.Message(
-                                            $"You entered the {region.Name}, please leave within {(int)(20 - (now - enteredSpawnTime).TotalSeconds)} seconds!");
+                                            $"You entered the {region.Name}, please leave within {(int)(20 - (now - enteredSpawnTime).TotalSeconds)} seconds!",
+                                            1f);
                                     }
                                 }
                             }
@@ -136,9 +138,13 @@ public class RegionManager : Event
         return base.OnPlayerSpawned(player);
     }
 
-    public override Task OnConnected()
+    public override Task OnGameStateChanged(GameState oldState, GameState newState)
     {
-        StartRegionManager();
-        return Task.CompletedTask;
+        if (newState == GameState.Playing)
+            StartRegionManager();
+
+        if (newState == GameState.EndingGame)
+            StopRegionManager();
+        return base.OnGameStateChanged(oldState, newState);
     }
 }

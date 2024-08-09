@@ -24,7 +24,6 @@ public class CustomGamemodeHelper
         if (IsValidCustomGamemode(gm))
         {
             server.ResetEvents();
-            server.SetServerSizeForNextMatch(MapSize._127vs127);
             
             switch (gm.ToLower())
             {
@@ -34,6 +33,7 @@ public class CustomGamemodeHelper
                     break;
                 case "vip":
                     server.AddEvents(CustomGameModeEvents.VipEvents);
+                    server.SetServerSizeForNextMatch(MapSize._127vs127);
                     server.ForceEndGame();
                     break;
                 case "hideandseek":

@@ -19,6 +19,11 @@ public class RegionList
               WineParadiseRegions.TeamASafeZone,
               WineParadiseRegions.TeamBSafeZone
             },
+            "TensaTown" => new List<RegionHelper.Region?>
+            {
+                TensaTownRegions.TeamASafeZone,
+                TensaTownRegions.TeamBSafeZone
+            },
             _ => new List<RegionHelper.Region?>()
         };
     }
