@@ -10,6 +10,7 @@ public interface IPlayerProperties
         public const string SpawnedInSpawn = "spawned_in_spawn";
         public const string SpawnedInSpawnTime = "spawned_in_spawn_time";
         public const string EnteredSpawnTime = "entered_spawn_time";
+        public const string LastMessageSentTime = "last_message_sent_time";
     }
     
     /// <summary>

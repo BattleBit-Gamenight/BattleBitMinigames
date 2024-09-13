@@ -131,11 +131,6 @@ public class ZombiesGamemode : Event
         loadingScreen.AppendLine($"- Do not defend anywhere infected can't access");
         Server.SetLoadingScreenText(loadingScreen.ToString());
         
-        Server.GamemodeRotation.ClearRotation();
-        Server.GamemodeRotation.SetRotation("DOMI");
-        Server.ExecuteCommand("setsize ultra");
-        Server.ExecuteCommand("setspeedhackdetection false");
-        Server.ExecuteCommand("setmaxping 999");
         Server.ServerSettings.UnlockAllAttachments = true;
         Server.ServerSettings.PlayerCollision = true;
         Server.ServerSettings.HideMapVotes = false;

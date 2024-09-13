@@ -1,6 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using BattleBitAPI;
 using BattleBitMinigames.Enums;
+using BattleBitMinigames.Interfaces;
 
 namespace BattleBitMinigames.Api;
 public class BattleBitPlayer : Player<BattleBitPlayer>
@@ -71,5 +72,19 @@ public class BattleBitPlayer : Player<BattleBitPlayer>
     public void ClearAllPlayerProperties()
     {
         PlayerProperties.Clear();
+    }
+
+    public bool CanReceiveMessage()
+    {
+        var now = DateTime.UtcNow;
+        var lastMessageSentTimeStr = GetPlayerProperty(IPlayerProperties.IGeneralPlayerProperties.LastMessageSentTime);
+
+        if (DateTime.TryParse(lastMessageSentTimeStr, out var lastMessageSentTime))
+        {
+            if ((now - lastMessageSentTime).TotalSeconds <= 5)
+                return false;
+        }
+        
+        return true;
     }
 }

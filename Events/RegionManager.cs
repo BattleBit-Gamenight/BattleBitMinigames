@@ -121,6 +121,8 @@ public class RegionManager : Event
         var spawnedInSpawn = player.GetPlayerProperty(IPlayerProperties.IGeneralPlayerProperties.SpawnedInSpawn);
         var spawnedInSpawnTimeStr = player.GetPlayerProperty(IPlayerProperties.IGeneralPlayerProperties.SpawnedInSpawnTime);
         var enteredSpawnTimeStr = player.GetPlayerProperty(IPlayerProperties.IGeneralPlayerProperties.EnteredSpawnTime);
+        
+        if (!player.CanReceiveMessage()) return;
 
         if (spawnedInSpawn == "true")
         {
@@ -135,6 +137,8 @@ public class RegionManager : Event
                 {
                     player.Message($"You spawned in the {region.Name}, please leave within {(int)(90 - (now - spawnedInSpawnTime).TotalSeconds)} seconds!", 1f);
                 }
+                
+                player.SetPlayerProperty(IPlayerProperties.IGeneralPlayerProperties.LastMessageSentTime, now.ToUniversalTime().ToString());
             }
         }
         else
@@ -154,6 +158,8 @@ public class RegionManager : Event
                 {
                     player.Message($"You entered the {region.Name}, please leave within {(int)(20 - (now - enteredSpawnTime).TotalSeconds)} seconds!", 1f);
                 }
+                
+                player.SetPlayerProperty(IPlayerProperties.IGeneralPlayerProperties.LastMessageSentTime, now.ToUniversalTime().ToString());
             }
         }
     }

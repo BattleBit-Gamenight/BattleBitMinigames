@@ -7,24 +7,24 @@ public class ServerSettings : Event
 {
     public override Task OnConnected()
     {
-        foreach (var Map in Server.MapRotation.GetMapRotation())
+        foreach (var map in Server.MapRotation.GetMapRotation())
         {
-            Server.MapRotation.RemoveFromRotation(Map);
+            Server.MapRotation.RemoveFromRotation(map);
         }
         
-        foreach (var Gamemode in Server.GamemodeRotation.GetGamemodeRotation())
+        foreach (var gamemode in Server.GamemodeRotation.GetGamemodeRotation())
         {
-            Server.GamemodeRotation.RemoveFromRotation(Gamemode);
+            Server.GamemodeRotation.RemoveFromRotation(gamemode);
         }
         
-        foreach (var Map in Program.ServerConfiguration.MapRotation)
+        foreach (var map in Program.ServerConfiguration.MapRotation)
         {
-            Server.MapRotation.AddToRotation(Map);
+            Server.MapRotation.AddToRotation(map);
         }
         
-        foreach (var Gamemode in Program.ServerConfiguration.GamemodeRotation)
+        foreach (var gamemode in Program.ServerConfiguration.GamemodeRotation)
         {
-            Server.GamemodeRotation.AddToRotation(Gamemode);
+            Server.GamemodeRotation.AddToRotation(gamemode);
         }
         
         if (!Server.MapRotation.GetMapRotation().Any())
@@ -36,6 +36,9 @@ public class ServerSettings : Event
         {
             Program.ReloadConfiguration();
         }
+        
+        Server.ExecuteCommand("setspeedhackdetection false");
+        Server.ExecuteCommand("setmaxping 999");
 
         var serverRotation = Server.MapRotation.GetMapRotation();
         Program.Logger.Info($"Loaded Map Rotation: {string.Join(", ", serverRotation)}");

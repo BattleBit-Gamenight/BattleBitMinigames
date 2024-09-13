@@ -1,5 +1,6 @@
 ﻿using BattleBitMinigames.Api;
 using BattleBitMinigames.Enums;
+using BattleBitMinigames.Interfaces;
 using log4net;
 
 namespace BattleBitMinigames.ChatCommands;
@@ -31,6 +32,11 @@ public class ChatCommand : Attribute
     
     public bool CanExecute(BattleBitPlayer player)
     {
-        return player.PlayerRoles.Any(role => role >= MinimumRequiredRole);
+        var canExec = player.PlayerRoles.Any(role => role >= MinimumRequiredRole);
+        
+        if (canExec)
+            player.SetPlayerProperty(IPlayerProperties.IGeneralPlayerProperties.LastMessageSentTime, DateTime.UtcNow.ToUniversalTime().ToString());
+        
+        return canExec;
     }
 }

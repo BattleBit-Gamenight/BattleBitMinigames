@@ -39,6 +39,7 @@ public class CustomGamemodeHelper
                     break;
                 case "hideandseek":
                     server.AddEvents(CustomGameModeEvents.HideAndSeekEvents);
+                    server.SetServerSizeForNextMatch(MapSize._127vs127);
                     server.ForceEndGame();
                     break;
                 case "gungame":
