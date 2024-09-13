@@ -1,7 +1,17 @@
 ﻿namespace BattleBitMinigames.Interfaces;
 
-public interface PlayerProperties
+public interface IPlayerProperties
 {
+    /// <summary>
+    /// General player properties
+    /// </summary>
+    public interface IGeneralPlayerProperties
+    {
+        public const string SpawnedInSpawn = "spawned_in_spawn";
+        public const string SpawnedInSpawnTime = "spawned_in_spawn_time";
+        public const string EnteredSpawnTime = "entered_spawn_time";
+    }
+    
     /// <summary>
     /// Hide and Seek player properties
     /// </summary>
@@ -40,8 +50,5 @@ public interface PlayerProperties
     public interface IVipPlayerProperties
     {
         public const string IsVip = "player_is_vip";
-        public const string SpawnedInSpawn = "spawned_in_spawn";
-        public const string SpawnedInSpawnTime = "spawned_in_spawn_time";
-        public const string EnteredSpawnTime = "entered_spawn_time";
     }
 }

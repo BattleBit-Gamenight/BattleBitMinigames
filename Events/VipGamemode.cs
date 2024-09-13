@@ -45,7 +45,7 @@ public class VipGamemode : Event
         player.Modifications.IsExposedOnMap = true;
         player.KickFromSquad();
         player.JoinSquad(Squads.King);
-        player.SetPlayerProperty(PlayerProperties.IVipPlayerProperties.IsVip, "true");
+        player.SetPlayerProperty(IPlayerProperties.IVipPlayerProperties.IsVip, "true");
     }
     
     private static void SetNonVipSettings(BattleBitPlayer player)
@@ -54,7 +54,7 @@ public class VipGamemode : Event
         player.Modifications.FallDamageMultiplier = 1f;
         player.Modifications.ReceiveDamageMultiplier = 1f;
         player.Modifications.GiveDamageMultiplier = 1f;
-        player.RemovePlayerProperty(PlayerProperties.IVipPlayerProperties.IsVip);
+        player.RemovePlayerProperty(IPlayerProperties.IVipPlayerProperties.IsVip);
     }
     
     // TODO: Implement function to increment player point contribution using player properties
@@ -62,10 +62,11 @@ public class VipGamemode : Event
     public override Task<OnPlayerSpawnArguments?> OnPlayerSpawning(BattleBitPlayer player,
         OnPlayerSpawnArguments request)
     {
-        if (request.Loadout.HeavyGadget.Name.ToLower().Contains("rpg") || request.Loadout.LightGadget.Name.ToLower().Contains("c4") || request.Loadout.LightGadget.Name.ToLower().Contains("claymore") || request.Loadout.Throwable.Name.ToLower().Contains("impact") || request.Loadout.Throwable.Name.ToLower().Contains("frag"))
+        if (request.Loadout.HeavyGadget.Name.ToLower().Contains("rpg") || request.Loadout.LightGadget.Name.ToLower().Contains("mine") || request.Loadout.LightGadget.Name.ToLower().Contains("c4") || request.Loadout.LightGadget.Name.ToLower().Contains("claymore") || request.Loadout.Throwable.Name.ToLower().Contains("impact") || request.Loadout.Throwable.Name.ToLower().Contains("frag"))
         {
+            var color = new[] { "Red", "Green", "Blue" }[_random.Next(3)];
             player.SayToChat($"{RichTextHelper.FromColorName("Orange")}You can't use explosives in this gamemode.");
-            player.Message($"{RichTextHelper.FromColorName("Orange")}You can't use explosives in this gamemode.", 10);
+            player.Message($"{RichTextHelper.FromColorName(color)}{RichTextHelper.Bold(true)}<size=40>You can't use explosives in this gamemode.</size>{RichTextHelper.Bold(false)}", 10);
             return Task.FromResult<OnPlayerSpawnArguments?>(null);
         }
         
@@ -76,7 +77,18 @@ public class VipGamemode : Event
                 if (_teamAVip == null && _lastTeamAVipSteamId != player.SteamID)
                 {
                     SetVipSettings(player);
-                    request.Wearings = PlayerOutfits.BlueTeam;
+                    
+                    foreach (var teamAPlayer in Server.AllTeamAPlayers)
+                    {
+                        if (teamAPlayer != _teamBVip)
+                            teamAPlayer.Message($"<size=20>The new VIP in your Team is {RichTextHelper.FromColorName("Gold")}{_teamAVip.Name}");
+                    }
+                    
+                    request.Wearings.Head = PlayerOutfits.BlueTeam.Head;
+                    request.Wearings.Chest = PlayerOutfits.BlueTeam.Chest;
+                    request.Wearings.Belt = PlayerOutfits.BlueTeam.Belt;
+                    request.Wearings.Backbag = PlayerOutfits.BlueTeam.Backbag;
+                    request.Wearings.Uniform = PlayerOutfits.BlueTeam.Uniform;
                     request.Loadout.PrimaryWeapon = new WeaponItem()
                     {
                         Tool = Weapons.M249,
@@ -101,7 +113,18 @@ public class VipGamemode : Event
                 if (_teamBVip == null && _lastTeamBVipSteamId != player.SteamID)
                 {
                     SetVipSettings(player);
-                    request.Wearings = PlayerOutfits.RedTeam;
+                    
+                    foreach (var teamBPlayer in Server.AllTeamBPlayers)
+                    {
+                        if (teamBPlayer != _teamBVip) 
+                            teamBPlayer.Message($"<size=20>The new VIP in your Team is {RichTextHelper.FromColorName("Gold")}{_teamBVip.Name}");
+                    }
+                    
+                    request.Wearings.Head = PlayerOutfits.RedTeam.Head;
+                    request.Wearings.Chest = PlayerOutfits.RedTeam.Chest;
+                    request.Wearings.Belt = PlayerOutfits.RedTeam.Belt;
+                    request.Wearings.Backbag = PlayerOutfits.RedTeam.Backbag;
+                    request.Wearings.Uniform = PlayerOutfits.RedTeam.Uniform;
                     request.Loadout.PrimaryWeapon = new WeaponItem()
                     {
                         Tool = Weapons.M249,
@@ -135,8 +158,8 @@ public class VipGamemode : Event
         {
             case GameState.Playing:
                 Server.RoundSettings.SecondsLeft = 100000;
-                Server.RoundSettings.TeamATickets = 350;
-                Server.RoundSettings.TeamBTickets = 350;
+                Server.RoundSettings.TeamATickets = 450;
+                Server.RoundSettings.TeamBTickets = 450;
                 break;
             case GameState.CountingDown:
                 Server.RoundSettings.SecondsLeft = 10;
@@ -188,12 +211,17 @@ public class VipGamemode : Event
         {
             case Team.TeamA when IsPlayerVip(victim):
                 // Give the killer's team 50 tickets for killing the VIP
-                Server.RoundSettings.TeamBTickets += 45;
-                Server.RoundSettings.TeamATickets -= 45;
-                Server.SayToAllChat($"{RichTextHelper.FromColorName("MediumPurple")}{killer.Name}{RichTextHelper.Color()} has killed the VIP ({RichTextHelper.FromColorName("Gold")}{victim.Name}{RichTextHelper.Color()})! {RichTextHelper.FromColorName("Red")}RU{RichTextHelper.Color()} has {RichTextHelper.FromColorName("Orange")}stolen 75 tickets{RichTextHelper.Color()} from {RichTextHelper.FromColorName("RoyalBlue")}US{RichTextHelper.Color()}.");
+                Server.RoundSettings.TeamBTickets += 40;
+                Server.RoundSettings.TeamATickets -= 40;
+                Server.SayToAllChat($"{RichTextHelper.FromColorName("MediumPurple")}{killer.Name}{RichTextHelper.Color()} has killed the VIP ({RichTextHelper.FromColorName("Gold")}{victim.Name}{RichTextHelper.Color()})! {RichTextHelper.FromColorName("Red")}RU{RichTextHelper.Color()} has {RichTextHelper.FromColorName("Orange")}stolen 40 tickets{RichTextHelper.Color()} from {RichTextHelper.FromColorName("RoyalBlue")}US{RichTextHelper.Color()}.");
                 
                 // Remove the VIP from the var
                 _teamAVip = null;
+                
+                if (Server.RoundSettings.TeamATickets == 0)
+                {
+                    Server.AnnounceLong($"Team {RichTextHelper.FromColorName("Orange")}US{RichTextHelper.Color("Black")} won the game!");
+                }
                 
                 // Kill the victim
                 victim.Kill();
@@ -204,12 +232,17 @@ public class VipGamemode : Event
                 break;
             case Team.TeamB when IsPlayerVip(victim):
                 // Give the killer's team 50 tickets for killing the VIP
-                Server.RoundSettings.TeamATickets += 45;
-                Server.RoundSettings.TeamBTickets -= 45;
-                Server.SayToAllChat($"{RichTextHelper.FromColorName("MediumPurple")}{killer.Name}{RichTextHelper.Color()} has killed the VIP ({RichTextHelper.FromColorName("Gold")}{victim.Name}{RichTextHelper.Color()})! {RichTextHelper.FromColorName("RoyalBlue")}US{RichTextHelper.Color()} has {RichTextHelper.FromColorName("Orange")}stolen 75 tickets{RichTextHelper.Color()} from {RichTextHelper.FromColorName("Red")}RU{RichTextHelper.Color()}.");
+                Server.RoundSettings.TeamATickets += 40;
+                Server.RoundSettings.TeamBTickets -= 40;
+                Server.SayToAllChat($"{RichTextHelper.FromColorName("MediumPurple")}{killer.Name}{RichTextHelper.Color()} has killed the VIP ({RichTextHelper.FromColorName("Gold")}{victim.Name}{RichTextHelper.Color()})! {RichTextHelper.FromColorName("RoyalBlue")}US{RichTextHelper.Color()} has {RichTextHelper.FromColorName("Orange")}stolen 40 tickets{RichTextHelper.Color()} from {RichTextHelper.FromColorName("Red")}RU{RichTextHelper.Color()}.");
                 
                 // Remove the VIP from the var
                 _teamBVip = null;
+                
+                if (Server.RoundSettings.TeamBTickets == 0)
+                {
+                    Server.AnnounceLong($"Team {RichTextHelper.FromColorName("Orange")}RU{RichTextHelper.Color("Black")} won the game!");
+                }
                 
                 // Kill the victim
                 victim.Kill();

@@ -61,7 +61,7 @@ public class ZombiesGamemode : Event
         Program.Logger.Info($"Infecting player {player.Name}");
         
         player.Kill();
-        player.SetPlayerProperty(PlayerProperties.IInfectedPlayerProperties.IsInfected, "true");
+        player.SetPlayerProperty(IPlayerProperties.IInfectedPlayerProperties.IsInfected, "true");
         player.ChangeTeam(Team.TeamB);
 
         if (State != InfectedGameStates.Running)
@@ -75,13 +75,13 @@ public class ZombiesGamemode : Event
         Program.Logger.Info($"Curing player {player.Name}");
         
         player.Kill();
-        player.SetPlayerProperty(PlayerProperties.IInfectedPlayerProperties.IsInfected, "false");
+        player.SetPlayerProperty(IPlayerProperties.IInfectedPlayerProperties.IsInfected, "false");
         player.ChangeTeam(Team.TeamA);
     }
     
     private bool IsPlayerInfected(BattleBitPlayer player)
     {
-        return player.GetPlayerProperty(PlayerProperties.IInfectedPlayerProperties.IsInfected) == "true";
+        return player.GetPlayerProperty(IPlayerProperties.IInfectedPlayerProperties.IsInfected) == "true";
     }
 
     private Task ReleaseTheInfected()
@@ -193,11 +193,11 @@ public class ZombiesGamemode : Event
     
     private int GetPlayerKillsAsInfected(BattleBitPlayer player)
     {
-        var kills = player.GetPlayerProperty(PlayerProperties.IInfectedPlayerProperties.KillsAsInfected);
+        var kills = player.GetPlayerProperty(IPlayerProperties.IInfectedPlayerProperties.KillsAsInfected);
         
         if (kills != "") return int.Parse(kills);
         
-        player.SetPlayerProperty(PlayerProperties.IInfectedPlayerProperties.KillsAsInfected, "0");
+        player.SetPlayerProperty(IPlayerProperties.IInfectedPlayerProperties.KillsAsInfected, "0");
         return 0;
 
     }
@@ -206,16 +206,16 @@ public class ZombiesGamemode : Event
     {
         var kills = GetPlayerKillsAsInfected(player);
         kills++;
-        player.SetPlayerProperty(PlayerProperties.IInfectedPlayerProperties.KillsAsInfected, kills.ToString());
+        player.SetPlayerProperty(IPlayerProperties.IInfectedPlayerProperties.KillsAsInfected, kills.ToString());
     }
     
     private int GetPlayerKillsAsHuman(BattleBitPlayer player)
     {
-        var kills = player.GetPlayerProperty(PlayerProperties.IInfectedPlayerProperties.KillsAsHuman);
+        var kills = player.GetPlayerProperty(IPlayerProperties.IInfectedPlayerProperties.KillsAsHuman);
         
         if (kills != "") return int.Parse(kills);
         
-        player.SetPlayerProperty(PlayerProperties.IInfectedPlayerProperties.KillsAsHuman, "0");
+        player.SetPlayerProperty(IPlayerProperties.IInfectedPlayerProperties.KillsAsHuman, "0");
         return 0;
 
     }
@@ -224,7 +224,7 @@ public class ZombiesGamemode : Event
     {
         var kills = GetPlayerKillsAsHuman(player);
         kills++;
-        player.SetPlayerProperty(PlayerProperties.IInfectedPlayerProperties.KillsAsHuman, kills.ToString());
+        player.SetPlayerProperty(IPlayerProperties.IInfectedPlayerProperties.KillsAsHuman, kills.ToString());
     }
     
     private void UpdatePlayerSideMessage(BattleBitPlayer player)
@@ -235,7 +235,7 @@ public class ZombiesGamemode : Event
         
         if (IsPlayerInfected(player))
         {
-            message.AppendLine($"You are a {RichTextHelper.Bold(true)}{player.GetPlayerProperty(PlayerProperties.IInfectedPlayerProperties.ZombieType)}{RichTextHelper.Bold(false)} zombie!");
+            message.AppendLine($"You are a {RichTextHelper.Bold(true)}{player.GetPlayerProperty(IPlayerProperties.IInfectedPlayerProperties.ZombieType)}{RichTextHelper.Bold(false)} zombie!");
             message.AppendLine($"You've infected {RichTextHelper.Bold(true)}{GetPlayerKillsAsInfected(player)}{RichTextHelper.Bold(false)} humans!");
         }
         else
@@ -618,7 +618,7 @@ public class ZombiesGamemode : Event
             if (random < 80) // Normal zombie loadout
             {
                 // Player settings
-                player.SetPlayerProperty(PlayerProperties.IInfectedPlayerProperties.ZombieType, "normal");
+                player.SetPlayerProperty(IPlayerProperties.IInfectedPlayerProperties.ZombieType, "normal");
                 player.Modifications.RunningSpeedMultiplier = 1.1f;
                 player.Modifications.JumpHeightMultiplier = 1.1f;
                 player.Modifications.ReceiveDamageMultiplier = 0.85f;
@@ -629,7 +629,7 @@ public class ZombiesGamemode : Event
             else if (random < 85) // Fast zombie loadout
             {
                 // Player settings
-                player.SetPlayerProperty(PlayerProperties.IInfectedPlayerProperties.ZombieType, "fast");
+                player.SetPlayerProperty(IPlayerProperties.IInfectedPlayerProperties.ZombieType, "fast");
                 player.Modifications.ReceiveDamageMultiplier = 0.95f;
                 player.Modifications.RunningSpeedMultiplier = 1.3f;
                 player.Modifications.JumpHeightMultiplier = 1.1f;
@@ -647,7 +647,7 @@ public class ZombiesGamemode : Event
             else if (random < 90) // Leaper zombie loadout
             {
                 // Player settings
-                player.SetPlayerProperty(PlayerProperties.IInfectedPlayerProperties.ZombieType, "leaper");
+                player.SetPlayerProperty(IPlayerProperties.IInfectedPlayerProperties.ZombieType, "leaper");
                 player.Modifications.RunningSpeedMultiplier = 1.1f;
                 player.Modifications.JumpHeightMultiplier = 2f;
                 player.Modifications.ReceiveDamageMultiplier = 0.7f;
@@ -665,7 +665,7 @@ public class ZombiesGamemode : Event
             else if (random < 95) // Boomer zombie loadout
             {
                 // Player settings
-                player.SetPlayerProperty(PlayerProperties.IInfectedPlayerProperties.ZombieType, "boomer");
+                player.SetPlayerProperty(IPlayerProperties.IInfectedPlayerProperties.ZombieType, "boomer");
                 player.Modifications.RunningSpeedMultiplier = 1.2f;
                 player.Modifications.ReceiveDamageMultiplier = 0.7f;
                 player.Modifications.IsExposedOnMap = true;
@@ -686,7 +686,7 @@ public class ZombiesGamemode : Event
             else // Tank zombie loadout
             {
                 // Player settings
-                player.SetPlayerProperty(PlayerProperties.IInfectedPlayerProperties.ZombieType, "tank");
+                player.SetPlayerProperty(IPlayerProperties.IInfectedPlayerProperties.ZombieType, "tank");
                 player.Modifications.ReceiveDamageMultiplier = 0.45f;
                 player.Modifications.RunningSpeedMultiplier = 0.75f;
                 player.Modifications.IsExposedOnMap = true;

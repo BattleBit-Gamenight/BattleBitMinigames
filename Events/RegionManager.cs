@@ -28,67 +28,34 @@ public class RegionManager : Event
                     var region = RegionHelper.GetIsPlayerInRegion(RegionList.GetMapRegions(Server.Map), player);
                     if (region != null)
                     {
-                        if (Program.ServerConfiguration.LaunchCustomGamemode == "vip")
+                        switch (Program.ServerConfiguration.LaunchCustomGamemode)
                         {
-                            var isVip = player.GetPlayerProperty(PlayerProperties.IVipPlayerProperties.IsVip);
-                            if (isVip != "true") continue;
-
-                            var now = DateTime.UtcNow;
-                            var spawnedInSpawn =
-                                player.GetPlayerProperty(PlayerProperties.IVipPlayerProperties.SpawnedInSpawn);
-                            var spawnedInSpawnTimeStr =
-                                player.GetPlayerProperty(PlayerProperties.IVipPlayerProperties.SpawnedInSpawnTime);
-                            var enteredSpawnTimeStr =
-                                player.GetPlayerProperty(PlayerProperties.IVipPlayerProperties.EnteredSpawnTime);
-
-                            if (spawnedInSpawn == "true")
+                            case "vip":
                             {
-                                if (DateTime.TryParse(spawnedInSpawnTimeStr, out var spawnedInSpawnTime))
-                                {
-                                    if ((now - spawnedInSpawnTime).TotalSeconds >= 90)
-                                    {
-                                        player.Kill();
-                                        player.Message($"You spawned in the {region.Name} and stayed for too long!",
-                                            15);
-                                    }
-                                    else if ((now - spawnedInSpawnTime).TotalSeconds >= 10)
-                                    {
-                                        player.Message(
-                                            $"You spawned in the {region.Name}, please leave within {(int)(90 - (now - spawnedInSpawnTime).TotalSeconds)} seconds!",
-                                            1f);
-                                    }
-                                }
+                                if (player.GetPlayerProperty(IPlayerProperties.IVipPlayerProperties.IsVip) != "true")
+                                    continue;
+                                
+                                HandlePlayerInRegion(player, region);
+                                
+                                break;
                             }
-                            else
+                            case "hideandseek":
                             {
-                                if (enteredSpawnTimeStr == string.Empty)
-                                {
-                                    player.SetPlayerProperty(PlayerProperties.IVipPlayerProperties.EnteredSpawnTime,
-                                        now.ToUniversalTime().ToString());
-                                }
-                                else if (DateTime.TryParse(enteredSpawnTimeStr, out var enteredSpawnTime))
-                                {
-                                    if ((now - enteredSpawnTime).TotalSeconds >= 20)
-                                    {
-                                        player.Kill();
-                                        player.Message($"You were in the {region.Name} for too long!", 15);
-                                    }
-                                    else
-                                    {
-                                        player.Message(
-                                            $"You entered the {region.Name}, please leave within {(int)(20 - (now - enteredSpawnTime).TotalSeconds)} seconds!",
-                                            1f);
-                                    }
-                                }
+                                if (player.GetPlayerProperty(IPlayerProperties.IHideAndSeekPlayerProperties.IsSeeking) == "true")
+                                    continue;
+                                
+                                HandlePlayerInRegion(player, region);
+                                
+                                break;
                             }
                         }
                     }
                     else
                     {
                         // Reset properties when a player leaves the spawn region
-                        player.RemovePlayerProperty(PlayerProperties.IVipPlayerProperties.SpawnedInSpawn);
-                        player.RemovePlayerProperty(PlayerProperties.IVipPlayerProperties.EnteredSpawnTime);
-                        player.RemovePlayerProperty(PlayerProperties.IVipPlayerProperties.SpawnedInSpawnTime);
+                        player.RemovePlayerProperty(IPlayerProperties.IGeneralPlayerProperties.SpawnedInSpawn);
+                        player.RemovePlayerProperty(IPlayerProperties.IGeneralPlayerProperties.EnteredSpawnTime);
+                        player.RemovePlayerProperty(IPlayerProperties.IGeneralPlayerProperties.SpawnedInSpawnTime);
                     }
                 }
 
@@ -130,8 +97,8 @@ public class RegionManager : Event
         var region = RegionHelper.GetIsPlayerInRegion(RegionList.GetMapRegions(Server.Map), player);
         if (region != null)
         {
-            player.SetPlayerProperty(PlayerProperties.IVipPlayerProperties.SpawnedInSpawn, "true");
-            player.SetPlayerProperty(PlayerProperties.IVipPlayerProperties.SpawnedInSpawnTime,
+            player.SetPlayerProperty(IPlayerProperties.IGeneralPlayerProperties.SpawnedInSpawn, "true");
+            player.SetPlayerProperty(IPlayerProperties.IGeneralPlayerProperties.SpawnedInSpawnTime,
                 DateTime.UtcNow.ToString());
         }
 
@@ -146,5 +113,48 @@ public class RegionManager : Event
         if (newState == GameState.EndingGame)
             StopRegionManager();
         return base.OnGameStateChanged(oldState, newState);
+    }
+
+    private void HandlePlayerInRegion(BattleBitPlayer player, RegionHelper.Region region)
+    {
+        var now = DateTime.UtcNow;
+        var spawnedInSpawn = player.GetPlayerProperty(IPlayerProperties.IGeneralPlayerProperties.SpawnedInSpawn);
+        var spawnedInSpawnTimeStr = player.GetPlayerProperty(IPlayerProperties.IGeneralPlayerProperties.SpawnedInSpawnTime);
+        var enteredSpawnTimeStr = player.GetPlayerProperty(IPlayerProperties.IGeneralPlayerProperties.EnteredSpawnTime);
+
+        if (spawnedInSpawn == "true")
+        {
+            if (DateTime.TryParse(spawnedInSpawnTimeStr, out var spawnedInSpawnTime))
+            {
+                if ((now - spawnedInSpawnTime).TotalSeconds >= 90)
+                {
+                    player.Kill();
+                    player.Message($"You spawned in the {region.Name} and stayed for too long!", 15f);
+                }
+                else if ((now - spawnedInSpawnTime).TotalSeconds >= 10)
+                {
+                    player.Message($"You spawned in the {region.Name}, please leave within {(int)(90 - (now - spawnedInSpawnTime).TotalSeconds)} seconds!", 1f);
+                }
+            }
+        }
+        else
+        {
+            if (enteredSpawnTimeStr == string.Empty)
+            {
+                player.SetPlayerProperty(IPlayerProperties.IGeneralPlayerProperties.EnteredSpawnTime, now.ToUniversalTime().ToString());
+            }
+            else if (DateTime.TryParse(enteredSpawnTimeStr, out var enteredSpawnTime))
+            {
+                if ((now - enteredSpawnTime).TotalSeconds >= 20)
+                {
+                    player.Kill();
+                    player.Message($"You were in the {region.Name} for too long!", 15f);
+                }
+                else
+                {
+                    player.Message($"You entered the {region.Name}, please leave within {(int)(20 - (now - enteredSpawnTime).TotalSeconds)} seconds!", 1f);
+                }
+            }
+        }
     }
 }

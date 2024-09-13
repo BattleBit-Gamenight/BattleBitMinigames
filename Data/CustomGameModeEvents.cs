@@ -21,7 +21,7 @@ public static class CustomGameModeEvents
     public static readonly List<Event> HideAndSeekEvents = new()
     {
         new HideAndSeekGamemode(),
-        // new RegionManager()
+        new RegionManager()
     };
 
     public  static readonly List<Event> GunGameEvents = new()

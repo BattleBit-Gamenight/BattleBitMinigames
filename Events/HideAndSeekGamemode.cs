@@ -40,33 +40,33 @@ public class HideAndSeekGamemode : Event
     
     private static bool IsPlayerSeeking(BattleBitPlayer player)
     {
-        var value = player.GetPlayerProperty(PlayerProperties.IHideAndSeekPlayerProperties.IsSeeking);
+        var value = player.GetPlayerProperty(IPlayerProperties.IHideAndSeekPlayerProperties.IsSeeking);
         return value != string.Empty && value != "false";
     }
     
     private static int GetPlayerHidersFound(BattleBitPlayer player)
     {
-        var value = player.GetPlayerProperty(PlayerProperties.IHideAndSeekPlayerProperties.HidersFound);
+        var value = player.GetPlayerProperty(IPlayerProperties.IHideAndSeekPlayerProperties.HidersFound);
         return value != string.Empty ? int.Parse(value) : 0;
     }
     
     private static void AddPlayerHidersFound(BattleBitPlayer player)
     {
         var hidersFound = GetPlayerHidersFound(player);
-        player.SetPlayerProperty(PlayerProperties.IHideAndSeekPlayerProperties.HidersFound, (hidersFound + 1).ToString());
+        player.SetPlayerProperty(IPlayerProperties.IHideAndSeekPlayerProperties.HidersFound, (hidersFound + 1).ToString());
         Program.Logger.Info($"{player.Name} has found {hidersFound + 1} hiders!");
     }
     
     private static void MakePlayerSeeker(BattleBitPlayer player)
     {
-        player.SetPlayerProperty(PlayerProperties.IHideAndSeekPlayerProperties.IsSeeking, "true");
+        player.SetPlayerProperty(IPlayerProperties.IHideAndSeekPlayerProperties.IsSeeking, "true");
         player.ChangeTeam(Team.TeamA);
         Program.Logger.Info($"{player.Name} is now a seeker!");
     }
     
     private static void MakePlayerHider(BattleBitPlayer player)
     {
-        player.SetPlayerProperty(PlayerProperties.IHideAndSeekPlayerProperties.IsSeeking, "false");
+        player.SetPlayerProperty(IPlayerProperties.IHideAndSeekPlayerProperties.IsSeeking, "false");
         player.ChangeTeam(Team.TeamB);
         Program.Logger.Info($"{player.Name} is now a hider!");
     }
@@ -74,17 +74,17 @@ public class HideAndSeekGamemode : Event
     // Set default values for the hide and seek player properties
     private static void SetDefaultPlayerProperties(BattleBitPlayer player)
     {
-        player.SetPlayerProperty(PlayerProperties.IHideAndSeekPlayerProperties.IsSeeking, "false");
-        player.SetPlayerProperty(PlayerProperties.IHideAndSeekPlayerProperties.SeekingMeter, "NO LIFE DETECTED (300m+)");
-        player.SetPlayerProperty(PlayerProperties.IHideAndSeekPlayerProperties.HidersFound, "0");
+        player.SetPlayerProperty(IPlayerProperties.IHideAndSeekPlayerProperties.IsSeeking, "false");
+        player.SetPlayerProperty(IPlayerProperties.IHideAndSeekPlayerProperties.SeekingMeter, "NO LIFE DETECTED (300m+)");
+        player.SetPlayerProperty(IPlayerProperties.IHideAndSeekPlayerProperties.HidersFound, "0");
         Program.Logger.Info($"Set default properties for {player.Name}");
     }
     
     private static void ClearPlayerProperties(BattleBitPlayer player)
     {
-        player.RemovePlayerProperty(PlayerProperties.IHideAndSeekPlayerProperties.IsSeeking);
-        player.RemovePlayerProperty(PlayerProperties.IHideAndSeekPlayerProperties.SeekingMeter);
-        player.RemovePlayerProperty(PlayerProperties.IHideAndSeekPlayerProperties.HidersFound);
+        player.RemovePlayerProperty(IPlayerProperties.IHideAndSeekPlayerProperties.IsSeeking);
+        player.RemovePlayerProperty(IPlayerProperties.IHideAndSeekPlayerProperties.SeekingMeter);
+        player.RemovePlayerProperty(IPlayerProperties.IHideAndSeekPlayerProperties.HidersFound);
         Program.Logger.Info($"Cleared properties for {player.Name}");
     }
 
@@ -131,7 +131,7 @@ public class HideAndSeekGamemode : Event
                     };
                     
                     if (closestHiderName != "") seekingMeterString += $"{RichTextHelper.NewLine()}Closest Hider: {RichTextHelper.FromColorName("RoyalBlue")}{closestHiderName}";
-                    seeker.SetPlayerProperty(PlayerProperties.IHideAndSeekPlayerProperties.SeekingMeter, seekingMeterString);
+                    seeker.SetPlayerProperty(IPlayerProperties.IHideAndSeekPlayerProperties.SeekingMeter, seekingMeterString);
 
                     await Task.Delay(5);
                 });
@@ -180,7 +180,7 @@ public class HideAndSeekGamemode : Event
                 foreach (var player in Server.AllPlayers)
                 {
                     var isSeeking = IsPlayerSeeking(player);
-                    var seekerMeter = player.GetPlayerProperty(PlayerProperties.IHideAndSeekPlayerProperties.SeekingMeter);
+                    var seekerMeter = player.GetPlayerProperty(IPlayerProperties.IHideAndSeekPlayerProperties.SeekingMeter);
                     var message = new StringBuilder();
                     message.AppendLine(
                         $"{RichTextHelper.Size(100)}{RichTextHelper.FromColorName("Snow")}BattleBit Hide and Seek!{RichTextHelper.Size(100)}");
@@ -568,7 +568,7 @@ public class HideAndSeekGamemode : Event
         {
             AddPlayerHidersFound(killer);
             MakePlayerSeeker(victim);
-            Server.SayToAllChat($"{RichTextHelper.Bold(true)}{killer.Name}{RichTextHelper.Bold(false)} found {RichTextHelper.Bold(true)}{victim.Name}{RichTextHelper.Bold(false)}! They've found {killer.GetPlayerProperty(PlayerProperties.IHideAndSeekPlayerProperties.HidersFound)} hiders!");
+            Server.SayToAllChat($"{RichTextHelper.Bold(true)}{killer.Name}{RichTextHelper.Bold(false)} found {RichTextHelper.Bold(true)}{victim.Name}{RichTextHelper.Bold(false)}! They've found {killer.GetPlayerProperty(IPlayerProperties.IHideAndSeekPlayerProperties.HidersFound)} hiders!");
         }
         
         // If all hiders are found, end the game

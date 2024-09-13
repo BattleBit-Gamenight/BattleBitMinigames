@@ -21,18 +21,18 @@ public class GunGameGamemode : Event
     
     private int GetPlayerTier(BattleBitPlayer player)
     {
-        return player.GetPlayerProperty(PlayerProperties.IGunGamePlayerProperties.Tier) == string.Empty ? 0 : int.Parse(player.GetPlayerProperty("tier"));
+        return player.GetPlayerProperty(IPlayerProperties.IGunGamePlayerProperties.Tier) == string.Empty ? 0 : int.Parse(player.GetPlayerProperty("tier"));
     }
     
     private void SetPlayerTier(BattleBitPlayer player, int tier)
     {
-        player.SetPlayerProperty(PlayerProperties.IGunGamePlayerProperties.Tier, tier.ToString());
+        player.SetPlayerProperty(IPlayerProperties.IGunGamePlayerProperties.Tier, tier.ToString());
     }
     
     private void IncrementPlayerTier(BattleBitPlayer player)
     {
         var tier = GetPlayerTier(player);
-        player.SetPlayerProperty(PlayerProperties.IGunGamePlayerProperties.Tier, (tier + 1).ToString());
+        player.SetPlayerProperty(IPlayerProperties.IGunGamePlayerProperties.Tier, (tier + 1).ToString());
     }
 
     private void StartGunGame()

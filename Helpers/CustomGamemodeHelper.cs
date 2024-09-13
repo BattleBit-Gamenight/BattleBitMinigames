@@ -11,7 +11,8 @@ public class CustomGamemodeHelper
         "zombies",
         "vip",
         "hideandseek",
-        "gungame"
+        "gungame",
+        "none"
     };
 
     public static bool IsValidCustomGamemode(string gm)
@@ -43,6 +44,10 @@ public class CustomGamemodeHelper
                 case "gungame":
                     server.AddEvents(CustomGameModeEvents.GunGameEvents);
                     server.ForceEndGame();
+                    break;
+                case "none":
+                    server.ResetEvents();
+                    server.SetServerSizeForNextMatch(MapSize._8v8);
                     break;
                 default:
                     return;
