@@ -12,7 +12,7 @@ namespace BattleBitMinigames.Events;
 public class HideAndSeekGamemode : Event
 {
     // GAMEMODE SETTINGS
-    private int RequiredPlayerCountToStart { get; set; } = 1;
+    private int RequiredPlayerCountToStart { get; set; } = 4;
     private int HideTimeDuration { get; set; } = 180;
     private int SelectingSeekersDuration { get; set; } = 30;
 
@@ -31,6 +31,13 @@ public class HideAndSeekGamemode : Event
     private float SeekerFallDamageMultiplier { get; set; } = 0.0f;
     private float SeekerGiveDamageMultiplier { get; set; } = 100.0f;
     private float SeekerReceiveDamageMultiplier { get; set; } = 0.0f;
+    
+    // RADAR DISTANCE
+    private const int SpicyRadarDistance = 25;
+    private const int HotRadarDistance = 50;
+    private const int WarmRadarDistance = 75;
+    private const int ColdRadarDistance = 150;
+    private const int FreezingRadarDistance = 300;
 
     // DO NOT CHANGE THESE VALUES
     private MinigameStates State { get; set; } = MinigameStates.WaitingForPlayers;
@@ -124,15 +131,15 @@ public class HideAndSeekGamemode : Event
                     // Update the SeekingMeter based on the closest hider found
                     var seekingMeterString = closestDistance switch
                     {
-                        <= 25 =>
+                        <= SpicyRadarDistance =>
                             $"{RichTextHelper.FromColorName("IndianRed")}SPICY{RichTextHelper.FromColorName("Snow")} (0-25m)",
-                        <= 50 =>
+                        <= HotRadarDistance =>
                             $"{RichTextHelper.FromColorName("Red")}HOT{RichTextHelper.FromColorName("Snow")} (25-50m)",
-                        <= 75 =>
+                        <= WarmRadarDistance =>
                             $"{RichTextHelper.FromColorName("Orange")}WARM{RichTextHelper.FromColorName("Snow")} (50-75m)",
-                        <= 150 =>
+                        <= ColdRadarDistance =>
                             $"{RichTextHelper.FromColorName("Blue")}COLD{RichTextHelper.FromColorName("Snow")} (75-150m)",
-                        <= 300 =>
+                        <= FreezingRadarDistance =>
                             $"{RichTextHelper.FromColorName("Blue")}FREEZING{RichTextHelper.FromColorName("Snow")} (150-300m)",
                         _ =>
                             $"{RichTextHelper.FromColorName("Violet")}NO LIFE DETECTED{RichTextHelper.FromColorName("Snow")} (300m+)"
