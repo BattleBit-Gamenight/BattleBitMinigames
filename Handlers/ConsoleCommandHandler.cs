@@ -2,16 +2,16 @@
 
 namespace BattleBitMinigames.Handlers;
 
-public class ConsoleCommandHandler
+public static class ConsoleCommandHandler
 {
-    public void Listen()
+    public static void Listen()
     {
         while (true)
         {
-            string? command = Console.ReadLine();
+            var command = Console.ReadLine();
             if (command is null)
             {
-                Program.Logger.Warn("No std in stream available.");
+                Program.Logger.Warn("No stdin stream available.");
                 Program.Logger.Error("Exiting...");
                 return;
             }
@@ -22,12 +22,12 @@ public class ConsoleCommandHandler
                 continue;
             }
             
-            string[] commandParts = command.Split(" ", StringSplitOptions.RemoveEmptyEntries);
+            var commandParts = command.Split(" ", StringSplitOptions.RemoveEmptyEntries);
             if (commandParts.Length == 0) continue;
             
-            string commandName = commandParts[0];
+            var commandName = commandParts[0];
             
-            ConsoleCommand? consoleCommand = ConsoleCommandList.Commands.FirstOrDefault(c => c.Name == commandName);
+            var consoleCommand = ConsoleCommandList.Commands.FirstOrDefault(c => c.Name == commandName);
             if (consoleCommand == null)
             {
                 Program.Logger.Error($"Command {commandName} not found.");

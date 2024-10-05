@@ -1,11 +1,14 @@
 ﻿services:
   battlebitminigames:
+    container_name: battlebitminigames
     image: battlebitminigames
+    stdin_open: true
+    tty: true
     build:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - "./appsettings.json:/app/appsettings.json"
+      - "./bin/Debug/net6.0/appsettings.json:/app/appsettings.json"
     networks:
       - battlebit
 

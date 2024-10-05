@@ -272,9 +272,8 @@ internal class Program
         await Task.CompletedTask;
     }
 
-    private void StartCommandHandler()
+    private static void StartCommandHandler()
     {
-        ConsoleCommandHandler commandHandler = new();
-        commandHandler.Listen();
+        ConsoleCommandHandler.Listen();
     }
 }
