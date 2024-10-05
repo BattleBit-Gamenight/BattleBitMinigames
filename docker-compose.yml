@@ -1,0 +1,13 @@
+﻿services:
+  battlebitminigames:
+    image: battlebitminigames
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - "./appsettings.json:/app/appsettings.json"
+    networks:
+      - battlebit
+
+networks:
+  battlebit:
