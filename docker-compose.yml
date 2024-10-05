@@ -8,7 +8,8 @@
       context: .
       dockerfile: Dockerfile
     volumes:
-      - "./bin/Debug/net6.0/appsettings.json:/app/appsettings.json"
+      # - "./bin/Debug/net6.0/appsettings.json:/app/appsettings.json"
+      - "./appsettings.json:/app/appsettings.json"
     networks:
       - battlebit
 
