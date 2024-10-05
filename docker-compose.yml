@@ -10,6 +10,8 @@
     volumes:
       # - "./bin/Debug/net6.0/appsettings.json:/app/appsettings.json"
       - "./appsettings.json:/app/appsettings.json"
+    ports:
+      - "30001:30001/tcp"
     networks:
       - battlebit
 
