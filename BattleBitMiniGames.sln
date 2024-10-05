@@ -1,0 +1,15 @@
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FA8F5709-D424-4435-AB63-E82CD78AFC05}") = "BattleBitMinigames", "BattleBitMinigames.csproj", "{AAECC0BF-4E85-4B20-AA90-11BC73D21F20}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AAECC0BF-4E85-4B20-AA90-11BC73D21F20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AAECC0BF-4E85-4B20-AA90-11BC73D21F20}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AAECC0BF-4E85-4B20-AA90-11BC73D21F20}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AAECC0BF-4E85-4B20-AA90-11BC73D21F20}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
