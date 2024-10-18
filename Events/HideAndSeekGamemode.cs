@@ -651,7 +651,7 @@ public class HideAndSeekGamemode : Event
         switch (newState)
         {
             case GameState.Playing:
-                Server.RoundSettings.SecondsLeft = 10000;
+                Server.RoundSettings.SecondsLeft = 1080;
                 Server.RoundSettings.TeamATickets = 10000;
                 Server.RoundSettings.TeamBTickets = 10000;
                 break;
