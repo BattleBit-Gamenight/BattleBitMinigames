@@ -264,7 +264,9 @@ public class HideAndSeekGamemode : Event
                             message.AppendLine($"{RichTextHelper.FromColorName("Snow")}Players needed to start: {RequiredPlayerCountToStart - Server.CurrentPlayerCount}");
                             break;
                     }
-
+                    
+                    if (!player.CanReceiveMessage()) continue;
+                    
                     player.Message(message.ToString(), 1000);
                 }
             }
@@ -291,6 +293,7 @@ public class HideAndSeekGamemode : Event
                 player.Modifications.CanDeploy = false;
                 player.Modifications.CanSpectate = false;
                 player.Kill();
+                await Task.Delay(500);
                 player.ChangeTeam(Team.TeamB);
                 ClearPlayerProperties(player);
             }

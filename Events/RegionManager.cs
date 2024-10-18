@@ -121,8 +121,6 @@ public class RegionManager : Event
         var spawnedInSpawn = player.GetPlayerProperty(IPlayerProperties.IGeneralPlayerProperties.SpawnedInSpawn);
         var spawnedInSpawnTimeStr = player.GetPlayerProperty(IPlayerProperties.IGeneralPlayerProperties.SpawnedInSpawnTime);
         var enteredSpawnTimeStr = player.GetPlayerProperty(IPlayerProperties.IGeneralPlayerProperties.EnteredSpawnTime);
-        
-        if (!player.CanReceiveMessage()) return;
 
         if (spawnedInSpawn == "true")
         {
