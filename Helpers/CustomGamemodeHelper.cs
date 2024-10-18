@@ -26,6 +26,8 @@ public class CustomGamemodeHelper
         {
             server.ResetEvents();
             
+            Program.Logger.Info($"CustomGamemode {gm.ToLower()}");
+            
             switch (gm.ToLower())
             {
                 case "zombies":
