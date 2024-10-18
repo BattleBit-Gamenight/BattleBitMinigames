@@ -166,6 +166,7 @@ public class HideAndSeekGamemode : Event
     private async void StartWaitingForPlayersMessage()
     {
         Program.Logger.Info("Waiting for players to join!");
+        StartInfoMessage();
         while (State == MinigameStates.WaitingForPlayers && Server.CurrentPlayerCount < RequiredPlayerCountToStart)
         {
             try
@@ -198,8 +199,6 @@ public class HideAndSeekGamemode : Event
                     Server.AllPlayers.Count(player => player.IsAlive && !IsPlayerSeeking(player));
                 foreach (var player in Server.AllPlayers)
                 {
-                    
-                    
                     var isSeeking = IsPlayerSeeking(player);
                     var seekerMeter = player.GetPlayerProperty(IPlayerProperties.IHideAndSeekPlayerProperties.SeekingMeter);
                     var message = new StringBuilder();
