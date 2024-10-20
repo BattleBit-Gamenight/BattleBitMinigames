@@ -24,10 +24,15 @@ public class RegionList
                 TensatownRegions.TeamASafeZone,
                 TensatownRegions.TeamBSafeZone
             },
-            "DustyDew" => new List<RegionHelper.Region?>
+            "Dustydew" => new List<RegionHelper.Region?>
             {
                 DustydewRegions.TeamASafeZone,
                 DustydewRegions.TeamBSafeZone
+            },
+            "OilDunes" => new List<RegionHelper.Region?>
+            {
+                OildunesRegions.TeamASafeZone,
+                OildunesRegions.TeamBSafeZone
             },
             _ => new List<RegionHelper.Region?>()
         };

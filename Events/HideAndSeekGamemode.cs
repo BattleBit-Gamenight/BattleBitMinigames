@@ -33,11 +33,11 @@ public class HideAndSeekGamemode : Event
     private float SeekerReceiveDamageMultiplier { get; set; } = 0.0f;
     
     // RADAR DISTANCE
-    private const int SpicyRadarDistance = 25;
-    private const int HotRadarDistance = 50;
+    private const int SpicyRadarDistance = 35;
+    //private const int HotRadarDistance = 50;
     private const int WarmRadarDistance = 75;
-    private const int ColdRadarDistance = 150;
-    private const int FreezingRadarDistance = 300;
+    //private const int ColdRadarDistance = 150;
+    //private const int FreezingRadarDistance = 300;
 
     // DO NOT CHANGE THESE VALUES
     private MinigameStates State { get; set; } = MinigameStates.WaitingForPlayers;
@@ -132,17 +132,19 @@ public class HideAndSeekGamemode : Event
                     var seekingMeterString = closestDistance switch
                     {
                         <= SpicyRadarDistance =>
-                            $"{RichTextHelper.FromColorName("IndianRed")}SPICY{RichTextHelper.FromColorName("Snow")} (0-25m)",
-                        <= HotRadarDistance =>
-                            $"{RichTextHelper.FromColorName("Red")}HOT{RichTextHelper.FromColorName("Snow")} (25-50m)",
+                            $"{RichTextHelper.FromColorName("IndianRed")}SPICY{RichTextHelper.FromColorName("Snow")} (0-35m)",
+                        //<= HotRadarDistance =>
+                        //    $"{RichTextHelper.FromColorName("Red")}HOT{RichTextHelper.FromColorName("Snow")} (25-50m)",
                         <= WarmRadarDistance =>
-                            $"{RichTextHelper.FromColorName("Orange")}WARM{RichTextHelper.FromColorName("Snow")} (50-75m)",
-                        <= ColdRadarDistance =>
-                            $"{RichTextHelper.FromColorName("Blue")}COLD{RichTextHelper.FromColorName("Snow")} (75-150m)",
-                        <= FreezingRadarDistance =>
-                            $"{RichTextHelper.FromColorName("Blue")}FREEZING{RichTextHelper.FromColorName("Snow")} (150-300m)",
+                            $"{RichTextHelper.FromColorName("Orange")}WARM{RichTextHelper.FromColorName("Snow")} (35-75m)",
                         _ =>
-                            $"{RichTextHelper.FromColorName("Violet")}NO LIFE DETECTED{RichTextHelper.FromColorName("Snow")} (300m+)"
+                            $"{RichTextHelper.FromColorName("Violet")}COLD{RichTextHelper.FromColorName("Snow")} (75m+)"
+                        //<= ColdRadarDistance =>
+                        //    $"{RichTextHelper.FromColorName("Blue")}COLD{RichTextHelper.FromColorName("Snow")} (75-150m)",
+                        //<= FreezingRadarDistance =>
+                        //    $"{RichTextHelper.FromColorName("Blue")}FREEZING{RichTextHelper.FromColorName("Snow")} (150-300m)",
+                        //_ =>
+                        //    $"{RichTextHelper.FromColorName("Violet")}NO LIFE DETECTED{RichTextHelper.FromColorName("Snow")} (300m+)"
                     };
 
                     if (closestHiderName != "")
