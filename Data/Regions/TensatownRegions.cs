@@ -3,7 +3,7 @@ using BattleBitMinigames.Handlers;
 
 namespace BattleBitMinigames.Data.Regions;
 
-public class TensaTownRegions
+public class TensatownRegions
 {
     // US safe zone
     public static readonly RegionHelper.Region TeamASafeZone = new (

@@ -11,7 +11,9 @@ public class RoleHelper
         76561198173566107, // Julgers
         76561198051546518, // Terminal
         76561199056414354, // Pom
-        76561198833659544 // Silly
+        76561198833659544, // Silly
+        76561198147887556, // Larry
+        
     };
 
     public static List<ulong> Moderators = new() { };

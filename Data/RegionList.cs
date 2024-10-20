@@ -21,8 +21,8 @@ public class RegionList
             },
             "TensaTown" => new List<RegionHelper.Region?>
             {
-                TensaTownRegions.TeamASafeZone,
-                TensaTownRegions.TeamBSafeZone
+                TensatownRegions.TeamASafeZone,
+                TensatownRegions.TeamBSafeZone
             },
             _ => new List<RegionHelper.Region?>()
         };
