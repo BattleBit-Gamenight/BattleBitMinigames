@@ -12,6 +12,7 @@ public class CustomGamemodeHelper
         "vip",
         "hideandseek",
         "gungame",
+        "swap",
         "none"
     };
 
