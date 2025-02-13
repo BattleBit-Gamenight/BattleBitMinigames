@@ -10,18 +10,21 @@ public class SwapGamemode : Event
     {
         var killer = args.Killer;
         var victim = args.Victim;
+        var checks = 0;
         
         if (killer == null || killer == victim || !killer.IsAlive)
             return;
 
         var newPosition = victim.Position + new Vector3(0,1.5f,0);
-        var checkOutOfBounds = newPosition - new Vector3(0, 20f, 0);
         
         killer.Teleport(newPosition);
-        
-        await Task.Delay(2000);
-        if (newPosition.Y < checkOutOfBounds.Y)
+        await Task.Delay(10);
+        while (Vector3.Distance(killer.Position, newPosition) > 3 && checks < 15)
+        {
+            checks++;
             killer.Teleport(newPosition);
+            await Task.Delay(10);
+        }
     }
     
     public override Task OnGameStateChanged(GameState oldState, GameState newState)
