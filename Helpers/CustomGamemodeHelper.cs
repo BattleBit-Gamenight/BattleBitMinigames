@@ -48,6 +48,10 @@ public class CustomGamemodeHelper
                     server.AddEvents(CustomGameModeEvents.GunGameEvents);
                     server.ForceEndGame();
                     break;
+                case "swap":
+                    server.AddEvents(CustomGameModeEvents.SwapEvents);
+                    server.ForceEndGame();
+                    break;
                 case "none":
                     server.ResetEvents();
                     server.SetServerSizeForNextMatch(MapSize._8v8);

@@ -24,8 +24,13 @@ public static class CustomGameModeEvents
         new RegionManager()
     };
 
-    public  static readonly List<Event> GunGameEvents = new()
+    public static readonly List<Event> GunGameEvents = new()
     {
         new GunGameGamemode()
+    };
+
+    public static readonly List<Event> SwapEvents = new()
+    {
+        new SwapGamemode(),
     };
 }
