@@ -51,6 +51,7 @@ public class CustomGamemodeHelper
                     break;
                 case "swap":
                     server.AddEvents(CustomGameModeEvents.SwapEvents);
+                    server.SetServerSizeForNextMatch(MapSize._16vs16);
                     server.ForceEndGame();
                     break;
                 case "none":
