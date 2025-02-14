@@ -16,6 +16,7 @@ namespace BattleBitMinigames;
 
 internal class Program
 {
+    private static readonly ManualResetEvent ShutdownEvent = new(false);
     public static ILog Logger { get; private set; } = null!;
     public static BattleBitServer Server { get; private set; } = null!;
     public static String ListenerIp { get; set; } = Environment.GetEnvironmentVariable("LISTENER_IP") ?? "0.0.0.0";
@@ -48,6 +49,7 @@ internal class Program
         {
             Logger = SetupLogger();
             StartServerListener();
+            ShutdownEvent.WaitOne();
         }
         catch (Exception ex)
         {
@@ -63,15 +65,6 @@ internal class Program
             
             // kill it with fire and dip out of here if we failed to initialize
             Environment.Exit(-1);
-        }
-
-        try
-        {
-            StartCommandHandler();
-        }
-        catch (Exception ex)
-        {
-            Logger.Error($"Command handler error: {Environment.NewLine}{ex}");
         }
     } 
 
