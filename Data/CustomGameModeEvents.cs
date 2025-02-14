@@ -33,4 +33,9 @@ public static class CustomGameModeEvents
     {
         new SwapGamemode()
     };
+
+    public static readonly List<Event> SwapRandomEvents = new()
+    {
+        new SwapRandomGamemode()
+    };
 }
