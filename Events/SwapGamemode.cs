@@ -31,11 +31,12 @@ public class SwapGamemode : Event
 
     private static void SetPlayerLoadout(BattleBitPlayer player, PlayerLoadout loadout)
     {
-        player.SetSecondaryWeapon(loadout.SecondaryWeapon, loadout.SecondaryExtraMagazines + 1);
-        player.SetHeavyGadget(loadout.HeavyGadgetName, loadout.HeavyGadgetExtra + 1);
+        player.SetFirstAidGadget(loadout.FirstAidName, loadout.FirstAidExtra + 1);
         player.SetLightGadget(loadout.LightGadgetName, loadout.LightGadgetExtra + 1);
-        // player.SetFirstAidGadget(loadout.FirstAidName, loadout.FirstAidExtra + 1);
+        player.SetHeavyGadget(loadout.HeavyGadgetName, loadout.HeavyGadgetExtra + 1);
         player.SetThrowable(loadout.ThrowableName, loadout.ThrowableExtra + 1);
+        player.SetSecondaryWeapon(loadout.SecondaryWeapon, loadout.SecondaryExtraMagazines + 1);
+        Task.Delay(100).Wait();
         player.SetPrimaryWeapon(loadout.PrimaryWeapon, loadout.PrimaryExtraMagazines + 1);
     }
     
