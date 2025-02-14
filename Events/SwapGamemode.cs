@@ -34,7 +34,7 @@ public class SwapGamemode : Event
         player.SetSecondaryWeapon(loadout.SecondaryWeapon, loadout.SecondaryExtraMagazines + 1);
         player.SetHeavyGadget(loadout.HeavyGadgetName, loadout.HeavyGadgetExtra + 1);
         player.SetLightGadget(loadout.LightGadgetName, loadout.LightGadgetExtra + 1);
-        player.SetFirstAidGadget(loadout.FirstAidName, loadout.FirstAidExtra + 1);
+        // player.SetFirstAidGadget(loadout.FirstAidName, loadout.FirstAidExtra + 1);
         player.SetThrowable(loadout.ThrowableName, loadout.ThrowableExtra + 1);
         player.SetPrimaryWeapon(loadout.PrimaryWeapon, loadout.PrimaryExtraMagazines + 1);
     }
