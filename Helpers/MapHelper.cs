@@ -45,4 +45,9 @@ public class MapHelper
     {
         return Maps.Contains(map.ToUpperInvariant());
     }
+    
+    public static List<string> GetAllMaps()
+    {
+        return Maps;
+    }
 }

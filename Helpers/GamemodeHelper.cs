@@ -30,4 +30,9 @@ public class GamemodeHelper
     {
         return GameModes.Contains(gm.ToUpperInvariant());
     }
+    
+    public static List<string> GetAllGamemodes()
+    {
+        return GameModes;
+    }
 }

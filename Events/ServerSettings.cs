@@ -22,19 +22,9 @@ public class ServerSettings : Event
             Server.MapRotation.AddToRotation(map);
         }
         
-        foreach (var gamemode in Program.MapRotation)
+        foreach (var gamemode in Program.GamemodeRotation)
         {
             Server.GamemodeRotation.AddToRotation(gamemode);
-        }
-        
-        if (!Server.MapRotation.GetMapRotation().Any())
-        {
-            Program.ReloadConfiguration();
-        }
-        
-        if (!Server.GamemodeRotation.GetGamemodeRotation().Any())
-        {
-            Program.ReloadConfiguration();
         }
         
         Server.ExecuteCommand("setspeedhackdetection false");
