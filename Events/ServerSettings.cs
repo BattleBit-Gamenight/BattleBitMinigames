@@ -17,12 +17,12 @@ public class ServerSettings : Event
             Server.GamemodeRotation.RemoveFromRotation(gamemode);
         }
         
-        foreach (var map in Program.ServerConfiguration.MapRotation)
+        foreach (var map in Program.MapRotation)
         {
             Server.MapRotation.AddToRotation(map);
         }
         
-        foreach (var gamemode in Program.ServerConfiguration.GamemodeRotation)
+        foreach (var gamemode in Program.MapRotation)
         {
             Server.GamemodeRotation.AddToRotation(gamemode);
         }

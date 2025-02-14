@@ -28,7 +28,7 @@ public class RegionManager : Event
                     var region = RegionHelper.GetIsPlayerInRegion(RegionList.GetMapRegions(Server.Map), player);
                     if (region != null)
                     {
-                        switch (Program.ServerConfiguration.LaunchCustomGamemode)
+                        switch (Program.LaunchCustomGamemode)
                         {
                             case "vip":
                             {

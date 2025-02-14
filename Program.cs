@@ -19,6 +19,15 @@ internal class Program
     public static ILog Logger { get; private set; } = null!;
     public static BattleBitServer Server { get; private set; } = null!;
     public static Configuration.ServerConfiguration ServerConfiguration { get; } = new();
+    public static String ListenerIp { get; set; } = Environment.GetEnvironmentVariable("LISTENER_IP") ?? ServerConfiguration.IP;
+    public static String ListenerPort { get; set; } = Environment.GetEnvironmentVariable("LISTENER_PORT") ?? ServerConfiguration.Port.ToString();
+    public static String LaunchCustomGamemode { get; set; } = Environment.GetEnvironmentVariable("LAUNCH_CUSTOM_GAMEMODE") ?? ServerConfiguration.LaunchCustomGamemode;
+    public static List<string> MapRotation { get; set; } = 
+        (Environment.GetEnvironmentVariable("MAP_ROTATION")?.Split(',').ToList()) 
+        ?? ServerConfiguration.MapRotation;
+    public static List<string> GamemodeRotation { get; set; } =
+        (Environment.GetEnvironmentVariable("GAMEMODE_ROTATION")?.Split(',').ToList()) 
+        ?? ServerConfiguration.GamemodeRotation;
     
     private static void Main()
     {
@@ -156,24 +165,24 @@ internal class Program
             Server.GamemodeRotation.RemoveFromRotation(gamemode);
         }
 
-        if (!ServerConfiguration.MapRotation.Any())
+        if (!MapRotation.Any())
         {
             ServerConfiguration.MapRotation.Add("AZAGOR");
             SaveConfiguration(ServerConfiguration);
         }
         
-        if (!ServerConfiguration.GamemodeRotation.Any())
+        if (!GamemodeRotation.Any())
         {
-            ServerConfiguration.GamemodeRotation.Add("CONQ");
+            GamemodeRotation.Add("CONQ");
             SaveConfiguration(ServerConfiguration);
         }
         
-        foreach (var map in ServerConfiguration.MapRotation)
+        foreach (var map in MapRotation)
         {
             Server.MapRotation.AddToRotation(map);
         }
         
-        foreach (var gamemode in ServerConfiguration.GamemodeRotation)
+        foreach (var gamemode in GamemodeRotation)
         {
             Server.GamemodeRotation.AddToRotation(gamemode);
         }
@@ -226,9 +235,9 @@ internal class Program
         listener.OnGameServerConnected = OnGameServerConnected;
         listener.LogLevel = ServerConfiguration.LogLevel;
         listener.OnLog += OnLog;
-        listener.Start(ServerConfiguration.Port);
+        listener.Start(int.Parse(ListenerPort));
 
-        Logger.Info($"Started server listener on {ServerConfiguration.IPAddress}:{ServerConfiguration.Port}");
+        Logger.Info($"Started server listener on {ServerConfiguration.IPAddress}:{ListenerPort}");
     }
 
     private static void OnLog(LogLevel level, string message, object? obj)
