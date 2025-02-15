@@ -13,6 +13,7 @@ public class RoleHelper
         76561199056414354, // Pom
         76561198833659544, // Silly
         76561198147887556, // Larry
+        76561198068252408, // Windypages
         
     };
 

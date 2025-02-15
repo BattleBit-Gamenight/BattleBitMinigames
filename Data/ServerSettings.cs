@@ -11,4 +11,13 @@ public class ServerSettings
     {
         "CashRun"
     };
+    
+    public static readonly List<string> ServerSizes = new()
+    {
+        "tiny",   // 8v8
+        "small",  // 16v16
+        "medium", // 32v32
+        "big",    // 64v64
+        "ultra"   // 127v127
+    };
 }

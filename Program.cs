@@ -16,9 +16,21 @@ namespace BattleBitMinigames;
 
 internal class Program
 {
+    private static readonly ManualResetEvent ShutdownEvent = new(false);
     public static ILog Logger { get; private set; } = null!;
     public static BattleBitServer Server { get; private set; } = null!;
     public static Configuration.ServerConfiguration ServerConfiguration { get; } = new();
+    public static String DisableConsoleCommands { get; set; } = Environment.GetEnvironmentVariable("DISABLE_CONSOLE_COMMANDS") ?? "false";
+    public static String ListenerIp { get; set; } = Environment.GetEnvironmentVariable("LISTENER_IP") ?? ServerConfiguration.IP;
+    public static String ListenerPort { get; set; } = Environment.GetEnvironmentVariable("LISTENER_PORT") ?? ServerConfiguration.Port.ToString();
+    public static String ServerPassword { get; set; } = Environment.GetEnvironmentVariable("SERVER_PASSWORD") ?? ServerConfiguration.Password;
+    public static String LaunchCustomGamemode { get; set; } = Environment.GetEnvironmentVariable("LAUNCH_CUSTOM_GAMEMODE") ?? ServerConfiguration.LaunchCustomGamemode;
+    public static List<string> MapRotation { get; set; } = 
+        (Environment.GetEnvironmentVariable("MAP_ROTATION")?.Split(',').ToList()) 
+        ?? ServerConfiguration.MapRotation;
+    public static List<string> GamemodeRotation { get; set; } =
+        (Environment.GetEnvironmentVariable("GAMEMODE_ROTATION")?.Split(',').ToList()) 
+        ?? ServerConfiguration.GamemodeRotation;
     
     private static void Main()
     {
@@ -58,13 +70,20 @@ internal class Program
             Environment.Exit(-1);
         }
 
-        try
+        if (DisableConsoleCommands == "false")
         {
-            StartCommandHandler();
+            try
+            {
+                StartCommandHandler();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($"Command handler error: {Environment.NewLine}{ex}");
+            }
         }
-        catch (Exception ex)
+        else
         {
-            Logger.Error($"Command handler error: {Environment.NewLine}{ex}");
+            ShutdownEvent.WaitOne();
         }
     } 
 
@@ -226,9 +245,9 @@ internal class Program
         listener.OnGameServerConnected = OnGameServerConnected;
         listener.LogLevel = ServerConfiguration.LogLevel;
         listener.OnLog += OnLog;
-        listener.Start(ServerConfiguration.Port);
+        listener.Start(int.Parse(ListenerPort));
 
-        Logger.Info($"Started server listener on {ServerConfiguration.IPAddress}:{ServerConfiguration.Port}");
+        Logger.Info($"Started server listener on {ListenerIp}:{ListenerPort}");
     }
 
     private static void OnLog(LogLevel level, string message, object? obj)
@@ -261,12 +280,12 @@ internal class Program
     {
         Logger.Info("Server connected.");
         Server = (BattleBitServer) server;
-        if (ServerConfiguration.Password != string.Empty)
-            Server.ExecuteCommand("setpass " + ServerConfiguration.Password);
+        if (ServerPassword != string.Empty)
+            Server.ExecuteCommand("setpass " + ServerPassword);
 
-        if (ServerConfiguration.LaunchCustomGamemode != string.Empty && Server.RoundSettings.State != GameState.EndingGame)
+        if (LaunchCustomGamemode != string.Empty && Server.RoundSettings.State != GameState.EndingGame)
         {
-            CustomGamemodeHelper.SetCustomGameMode(ServerConfiguration.LaunchCustomGamemode, Server);
+            CustomGamemodeHelper.SetCustomGameMode(LaunchCustomGamemode, Server);
         }
         
         await Task.CompletedTask;

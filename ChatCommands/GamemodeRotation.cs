@@ -105,7 +105,6 @@ public class GamemodeRotation : ChatCommand
                 case "rl":
                 case "reload":
                     Program.ReloadConfiguration();
-
                     player.Message("Reloaded map rotation.");
                     Program.Logger.Info("Reloaded map rotation.");
                     break;
