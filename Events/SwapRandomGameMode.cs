@@ -1,7 +1,7 @@
 ﻿using System.Numerics;
-using BattleBitAPI;
 using BattleBitAPI.Common;
 using BattleBitMinigames.Api;
+using BattleBitMinigames.Data;
 
 namespace BattleBitMinigames.Events;
 
@@ -77,10 +77,10 @@ public class SwapRandomGamemode : Event
         {
             request.Loadout.PrimaryWeapon = new WeaponItem()
             {
-                Tool = WeaponList.ElementAt(rnd.Next(0, WeaponList.Count())),
-                Barrel = BarrelList.ElementAt(rnd.Next(0, BarrelList.Count())),
-                MainSight = SightList.ElementAt(rnd.Next(0, SightList.Count())),
-                UnderRail = UnderRailList.ElementAt(rnd.Next(0, UnderRailList.Count())),
+                Tool = PlayerWeapons.WeaponList.ElementAt(rnd.Next(0, PlayerWeapons.WeaponList.Count())),
+                Barrel = PlayerWeapons.BarrelList.ElementAt(rnd.Next(0, PlayerWeapons.BarrelList.Count())),
+                MainSight = PlayerWeapons.SightList.ElementAt(rnd.Next(0, PlayerWeapons.SightList.Count())),
+                UnderRail = PlayerWeapons.UnderRailList.ElementAt(rnd.Next(0, PlayerWeapons.UnderRailList.Count())),
                 BoltAction = Attachments.BoltActionE,
                 CamoIndex = (ushort)rnd.Next(1, 1000),
                 AttachmentsCamoIndex = (ushort)rnd.Next(1, 1000),
@@ -90,10 +90,10 @@ public class SwapRandomGamemode : Event
 
             request.Loadout.SecondaryWeapon = new WeaponItem()
             {
-                Tool = WeaponList.FindAll(weapon => weapon != request.Loadout.PrimaryWeapon.Tool).ElementAt(rnd.Next(0, WeaponList.Count() - 1)),
-                Barrel = BarrelList.ElementAt(rnd.Next(0, BarrelList.Count())),
-                MainSight = SightList.ElementAt(rnd.Next(0, SightList.Count())),
-                UnderRail = UnderRailList.ElementAt(rnd.Next(0, UnderRailList.Count())),
+                Tool = PlayerWeapons.WeaponList.FindAll(weapon => weapon != request.Loadout.PrimaryWeapon.Tool).ElementAt(rnd.Next(0, PlayerWeapons.WeaponList.Count() - 1)),
+                Barrel = PlayerWeapons.BarrelList.ElementAt(rnd.Next(0, PlayerWeapons.BarrelList.Count())),
+                MainSight = PlayerWeapons.SightList.ElementAt(rnd.Next(0, PlayerWeapons.SightList.Count())),
+                UnderRail = PlayerWeapons.UnderRailList.ElementAt(rnd.Next(0, PlayerWeapons.UnderRailList.Count())),
                 BoltAction = Attachments.BoltActionE,
                 CamoIndex = (ushort)rnd.Next(1, 1000),
                 AttachmentsCamoIndex = (ushort)rnd.Next(1, 1000),
@@ -102,14 +102,14 @@ public class SwapRandomGamemode : Event
             };
             
 
-            request.Loadout.LightGadget = GadgetList.ElementAt(rnd.Next(0, GadgetList.Count()));
+            request.Loadout.LightGadget = PlayerWeapons.GadgetList.ElementAt(rnd.Next(0, PlayerWeapons.GadgetList.Count()));
             if (request.Loadout.LightGadget.Name.Contains("Rpg"))
-                request.Loadout.HeavyGadget = GadgetList.FindAll(gadget => !gadget.Name.Contains("Rpg")).ElementAt(rnd.Next(0, GadgetList.Count() - 5));
+                request.Loadout.HeavyGadget = PlayerWeapons.GadgetList.FindAll(gadget => !gadget.Name.Contains("Rpg")).ElementAt(rnd.Next(0, PlayerWeapons.GadgetList.Count() - 5));
             else if (request.Loadout.LightGadget.Name.Contains("Sledge") || request.Loadout.LightGadget.Name.Contains("Pickaxe"))
-                request.Loadout.HeavyGadget = GadgetList.FindAll(gadget => !(gadget.Name.Contains("Sledge") || gadget.Name.Contains("Pickaxe"))).ElementAt(rnd.Next(0, GadgetList.Count() - 6));
+                request.Loadout.HeavyGadget = PlayerWeapons.GadgetList.FindAll(gadget => !(gadget.Name.Contains("Sledge") || gadget.Name.Contains("Pickaxe"))).ElementAt(rnd.Next(0, PlayerWeapons.GadgetList.Count() - 6));
             else
-                request.Loadout.HeavyGadget = GadgetList.FindAll(gadget => gadget != request.Loadout.LightGadget).ElementAt(rnd.Next(0, GadgetList.Count() - 1));
-            request.Loadout.Throwable = ThrowableList.ElementAt(rnd.Next(0, ThrowableList.Count()));
+                request.Loadout.HeavyGadget = PlayerWeapons.GadgetList.FindAll(gadget => gadget != request.Loadout.LightGadget).ElementAt(rnd.Next(0, PlayerWeapons.GadgetList.Count() - 1));
+            request.Loadout.Throwable = PlayerWeapons.ThrowableList.ElementAt(rnd.Next(0, PlayerWeapons.ThrowableList.Count()));
 
             if (player.PingMs > 150)//this didn't work, need to figure out why
             {
@@ -122,8 +122,7 @@ public class SwapRandomGamemode : Event
             player.Modifications.JumpHeightMultiplier = (float)rnd.Next(80, 300) / 100;
             player.Modifications.ReloadSpeedMultiplier = (float)rnd.Next(100, 300) / 100;
             player.Modifications.FallDamageMultiplier = (float)rnd.Next(0, 10) / 100;
-
-
+            
             player.Modifications.KillFeed = true;
             player.Modifications.RespawnTime = 0;
             player.Modifications.CanSuicide = false;
@@ -135,175 +134,4 @@ public class SwapRandomGamemode : Event
             return null;
         }
     }
-    public List<Weapon> WeaponList = new List<Weapon>()
-    {
-        Weapons.ACR,
-        Weapons.AK15,
-        Weapons.AK74,
-        Weapons.G36C,
-        Weapons.HoneyBadger,
-        Weapons.KrissVector,
-        Weapons.L86A1,
-        Weapons.L96,
-        Weapons.M4A1,
-        Weapons.M9,
-        Weapons.M110,
-        Weapons.M249,
-        Weapons.MK14EBR,
-        Weapons.MK20,
-        Weapons.MP7,
-        Weapons.PP2000,
-        Weapons.SCARH,
-        Weapons.SSG69,
-        Weapons.SV98,
-        Weapons.UMP45,
-        Weapons.Unica,
-        Weapons.USP,
-        Weapons.AsVal,
-        Weapons.AUGA3,
-        Weapons.DesertEagle,
-        Weapons.FAL,
-        Weapons.Glock18,
-        Weapons.M200,
-        Weapons.MP443,
-        Weapons.FAMAS,
-        Weapons.MP5,
-        Weapons.P90,
-        Weapons.MSR,
-        Weapons.PP19,
-        Weapons.SVD,
-        Weapons.Rem700,
-        Weapons.SG550,
-        Weapons.Groza,
-        Weapons.HK419,
-        Weapons.ScorpionEVO,
-        Weapons.Rsh12,
-        Weapons.MG36,
-        Weapons.AK5C,
-        Weapons.Ultimax100,
-        new Weapon("G3", WeaponType.Rifle),
-        new Weapon("F2000", WeaponType.Rifle)
-    };
-    public List<Attachment> SideRailList = new List<Attachment>()
-    {
-        Attachments.Flashlight,
-        Attachments.Rangefinder,
-        Attachments.Redlaser,
-        Attachments.TacticalFlashlight,
-        Attachments.Greenlaser,
-        Attachments.Searchlight
-    };
-    public List<Attachment> BarrelList = new List<Attachment>()
-    {
-        Attachments.Basic,
-        Attachments.Compensator,
-        Attachments.Heavy,
-        Attachments.LongBarrel,
-        Attachments.MuzzleBreak,
-        Attachments.Ranger,
-        Attachments.SuppressorLong,
-        Attachments.SuppressorShort,
-        Attachments.Tactical,
-        Attachments.FlashHider,
-        Attachments.Osprey9,
-        Attachments.DGN308,
-        Attachments.VAMB762,
-        Attachments.SDN6762,
-        Attachments.NT4556
-    };
-    public List<Attachment> SightList = new List<Attachment>()
-    {
-        Attachments._6xScope,
-        Attachments._8xScope,
-        Attachments._15xScope,
-        Attachments._20xScope,
-        Attachments.PTR40Hunter,
-        Attachments._1P78,
-        Attachments.Acog,
-        Attachments.M125,
-        Attachments.Prisma,
-        Attachments.Slip,
-        Attachments.PistolDeltaSight,
-        Attachments.PistolRedDot,
-        Attachments.AimComp,
-        Attachments.Holographic,
-        Attachments.Kobra,
-        Attachments.OKP7,
-        Attachments.PKAS,
-        Attachments.RedDot,
-        Attachments.Reflex,
-        Attachments.Strikefire,
-        Attachments.Razor,
-        Attachments.Flir,
-        Attachments.Echo,
-        Attachments.TRI4X32,
-        Attachments.FYouSight,
-        Attachments.HoloPK120,
-        Attachments.Pistol8xScope,
-        Attachments.BurrisAR332,
-        Attachments.HS401G5,
-        new Attachment("F2000_Sight", AttachmentType.MainSight)
-    };
-    public List<Attachment> UnderRailList = new List<Attachment>()
-    {
-        Attachments.AngledGrip,
-        Attachments.Bipod,
-        Attachments.VerticalGrip,
-        Attachments.StubbyGrip,
-        Attachments.StabilGrip,
-        Attachments.VerticalSkeletonGrip,
-        Attachments.FABDTFG,
-        Attachments.MagpulAngled,
-        Attachments.BCMGunFighter,
-        Attachments.ShiftShortAngledGrip,
-        Attachments.SE5Grip,
-        Attachments.RK6Foregrip,
-        Attachments.HeraCQRFront,
-        Attachments.B25URK,
-        Attachments.VTACUVGTacticalGrip
-    };
-    public List<Gadget> GadgetList = new List<Gadget>()
-    {
-        Gadgets.Bandage,
-        Gadgets.Binoculars,
-        Gadgets.RepairTool,
-        Gadgets.C4,
-        Gadgets.Claymore,
-        Gadgets.M320SmokeGrenadeLauncher,
-        Gadgets.SmallAmmoKit,
-        Gadgets.AntiPersonnelMine,
-        Gadgets.AntiVehicleMine,
-        Gadgets.MedicKit,
-        Gadgets.Rpg7HeatExplosive,
-        Gadgets.RiotShield,
-        Gadgets.SledgeHammer,
-        Gadgets.AdvancedBinoculars,
-        Gadgets.Mdx201,
-        Gadgets.BinoSoflam,
-        Gadgets.HeavyAmmoKit,
-        Gadgets.Rpg7Pgo7Tandem,
-        Gadgets.Rpg7Pgo7HeatExplosive,
-        Gadgets.Rpg7Pgo7Fragmentation,
-        Gadgets.Rpg7Fragmentation,
-        Gadgets.GrapplingHook,
-        Gadgets.AirDrone,
-        Gadgets.Pickaxe,
-        Gadgets.SuicideC4,
-        Gadgets.SledgeHammerSkinA,
-        Gadgets.SledgeHammerSkinB,
-        Gadgets.SledgeHammerSkinC,
-        Gadgets.PickaxeIronPickaxe
-    };
-    public List<Gadget> ThrowableList = new List<Gadget>()
-    {
-        Gadgets.FragGrenade,
-        Gadgets.ImpactGrenade,
-        Gadgets.AntiVehicleGrenade,
-        Gadgets.SmokeGrenadeBlue,
-        Gadgets.SmokeGrenadeGreen,
-        Gadgets.SmokeGrenadeRed,
-        Gadgets.SmokeGrenadeWhite,
-        Gadgets.Flare,
-        Gadgets.Flashbang
-    };
 }
