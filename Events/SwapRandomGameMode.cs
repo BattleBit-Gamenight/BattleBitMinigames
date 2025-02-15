@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System.Collections.Concurrent;
+using System.Numerics;
 using BattleBitAPI.Common;
 using BattleBitMinigames.Api;
 using BattleBitMinigames.Data;
@@ -8,6 +9,7 @@ namespace BattleBitMinigames.Events;
 public class SwapRandomGamemode : Event
 {
     Random rnd = new Random();
+    private ConcurrentDictionary<ulong, PlayerLoadout> PlayerLoadouts { get; set; } = new();
     public override async Task OnAPlayerDownedAnotherPlayer(OnPlayerKillArguments<BattleBitPlayer> args)
     {
         var killer = args.Killer;
@@ -20,7 +22,8 @@ public class SwapRandomGamemode : Event
 
         killer.Teleport(newPosition);
         await Task.Delay(10);
-        SetPlayerLoadout(killer, victim.CurrentLoadout);
+        SetPlayerLoadout(killer, PlayerLoadouts[victim.SteamID]);
+        PlayerLoadouts[killer.SteamID] = victim.CurrentLoadout;
 
         var checks = 0;
         while (Vector3.Distance(killer.Position, newPosition) > 3 && checks < 15)
@@ -31,9 +34,17 @@ public class SwapRandomGamemode : Event
         }
     }
 
+    public override Task OnPlayerSpawned(BattleBitPlayer player)
+    {
+        // If the player's loadout is not set, set it
+        PlayerLoadouts[player.SteamID] = player.CurrentLoadout;
+        
+        return Task.CompletedTask;
+    }
+
     private static void SetPlayerLoadout(BattleBitPlayer player, PlayerLoadout loadout)
     {
-        player.SetFirstAidGadget(loadout.FirstAidName, loadout.FirstAidExtra + 1);
+        player.SetFirstAidGadget(loadout.FirstAidName, loadout.FirstAidExtra + 20);
         player.SetLightGadget(loadout.LightGadgetName, loadout.LightGadgetExtra + 1);
         player.SetHeavyGadget(loadout.HeavyGadgetName, loadout.HeavyGadgetExtra + 1);
         player.SetThrowable(loadout.ThrowableName, loadout.ThrowableExtra + 1);
@@ -55,6 +66,8 @@ public class SwapRandomGamemode : Event
                 Server.RoundSettings.SecondsLeft = 10;
                 break;
             case GameState.WaitingForPlayers:
+                PlayerLoadouts.Clear();
+                break;
             case GameState.EndingGame:
                 break;
             default:
@@ -111,17 +124,17 @@ public class SwapRandomGamemode : Event
                 request.Loadout.HeavyGadget = PlayerWeapons.GadgetList.FindAll(gadget => gadget != request.Loadout.LightGadget).ElementAt(rnd.Next(0, PlayerWeapons.GadgetList.Count() - 1));
             request.Loadout.Throwable = PlayerWeapons.ThrowableList.ElementAt(rnd.Next(0, PlayerWeapons.ThrowableList.Count()));
 
-            if (player.PingMs > 150)//this didn't work, need to figure out why
-            {
-                player.Modifications.RunningSpeedMultiplier = (float)rnd.Next(100, 125) / 100;
-                player.Modifications.JumpHeightMultiplier = (float)rnd.Next(100, 150) / 100;
-                player.Modifications.ReloadSpeedMultiplier = (float)rnd.Next(100, 300) / 100;
-                player.Modifications.FallDamageMultiplier = 0;
-            }
-            player.Modifications.RunningSpeedMultiplier = (float)rnd.Next(95, 300) / 100;
-            player.Modifications.JumpHeightMultiplier = (float)rnd.Next(80, 300) / 100;
-            player.Modifications.ReloadSpeedMultiplier = (float)rnd.Next(100, 300) / 100;
-            player.Modifications.FallDamageMultiplier = (float)rnd.Next(0, 10) / 100;
+            // if (player.PingMs > 150)//this didn't work, need to figure out why
+            // {
+            //     player.Modifications.RunningSpeedMultiplier = (float)rnd.Next(100, 125) / 100;
+            //     player.Modifications.JumpHeightMultiplier = (float)rnd.Next(100, 150) / 100;
+            //     player.Modifications.ReloadSpeedMultiplier = (float)rnd.Next(100, 300) / 100;
+            //     player.Modifications.FallDamageMultiplier = 0;
+            // }
+            // player.Modifications.RunningSpeedMultiplier = (float)rnd.Next(95, 300) / 100;
+            // player.Modifications.JumpHeightMultiplier = (float)rnd.Next(80, 300) / 100;
+            // player.Modifications.ReloadSpeedMultiplier = (float)rnd.Next(100, 300) / 100;
+            // player.Modifications.FallDamageMultiplier = (float)rnd.Next(0, 10) / 100;
             
             player.Modifications.KillFeed = true;
             player.Modifications.RespawnTime = 0;

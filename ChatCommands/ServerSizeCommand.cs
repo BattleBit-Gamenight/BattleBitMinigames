@@ -10,7 +10,7 @@ public class ServerSizeCommand : ChatCommand
         name: "setsize",
         description: "Set the size of the server for next round.",
         usage: "setsize <size>",
-        minimumRequiredRole: PlayerRoles.Moderator
+        minimumRequiredRole: PlayerRoles.Admin
     )
     {
         Action = (args, player) =>
