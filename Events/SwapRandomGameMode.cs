@@ -59,8 +59,8 @@ public class SwapRandomGamemode : Event
         {
             case GameState.Playing:
                 Server.RoundSettings.SecondsLeft = 100000;
-                Server.RoundSettings.TeamATickets = 600;
-                Server.RoundSettings.TeamBTickets = 600;
+                // Server.RoundSettings.TeamATickets = 600;
+                // Server.RoundSettings.TeamBTickets = 600;
                 break;
             case GameState.CountingDown:
                 Server.RoundSettings.SecondsLeft = 10;

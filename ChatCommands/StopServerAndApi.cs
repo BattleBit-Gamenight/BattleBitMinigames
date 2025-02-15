@@ -21,6 +21,7 @@ public class StopServerAndApi : ChatCommand
             }
 
             Program.Logger.Info("Closing Server...");
+            player.SayToChat("Closing Server...");
             Server.StopServer();
         };
     }

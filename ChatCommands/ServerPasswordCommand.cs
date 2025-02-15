@@ -30,6 +30,7 @@ public class ServerPasswordCommand : ChatCommand
             String password = args[0];
             
             Server.ExecuteCommand("setpass " + password);
+            player.SayToChat($"Server password set to {password}");
         };
     }
 }

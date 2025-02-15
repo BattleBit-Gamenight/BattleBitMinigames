@@ -36,6 +36,7 @@ public class ServerSizeCommand : ChatCommand
             }
             
             Server.ExecuteCommand("setsize " + size);
+            player.SayToChat($"Server size set to {size}");
         };
     }
 }
