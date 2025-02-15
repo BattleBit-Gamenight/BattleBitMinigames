@@ -49,6 +49,8 @@ public class MapRotation : ChatCommand
                             return;
                         }
                         
+                        Program.ServerConfiguration.MapRotation.Add(mapToAdd);
+                        Program.SaveConfiguration(Program.ServerConfiguration);
                         player.Message($"Added {RichTextHelper.Bold(true)}{RichTextHelper.FromColorName("Gold")}{mapToAdd}{RichTextHelper.Color()}{RichTextHelper.Bold(false)} to the rotation.");
                         Program.Logger.Info($"Added {mapToAdd} to the rotation.");
                     } 
@@ -74,6 +76,8 @@ public class MapRotation : ChatCommand
                             return;
                         }
                         
+                        Program.ServerConfiguration.MapRotation.Remove(mapToRemove);
+                        Program.SaveConfiguration(Program.ServerConfiguration);
                         player.Message($"Removed {RichTextHelper.Bold(true)}{RichTextHelper.FromColorName("Gold")}{mapToRemove}{RichTextHelper.Color()}{RichTextHelper.Bold(false)} from the rotation.");
                         Program.Logger.Info($"Removed {mapToRemove} from the rotation.");
                     }

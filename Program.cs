@@ -19,16 +19,18 @@ internal class Program
     private static readonly ManualResetEvent ShutdownEvent = new(false);
     public static ILog Logger { get; private set; } = null!;
     public static BattleBitServer Server { get; private set; } = null!;
-    public static String ListenerIp { get; set; } = Environment.GetEnvironmentVariable("LISTENER_IP") ?? "0.0.0.0";
-    public static String ListenerPort { get; set; } = Environment.GetEnvironmentVariable("LISTENER_PORT") ?? "30001";
-    public static String ServerPassword { get; set; } = Environment.GetEnvironmentVariable("SERVER_PASSWORD") ?? "";
-    public static String LaunchCustomGamemode { get; set; } = Environment.GetEnvironmentVariable("LAUNCH_CUSTOM_GAMEMODE") ?? "swap";
+    public static Configuration.ServerConfiguration ServerConfiguration { get; } = new();
+    public static String DisableConsoleCommands { get; set; } = Environment.GetEnvironmentVariable("DISABLE_CONSOLE_COMMANDS") ?? "false";
+    public static String ListenerIp { get; set; } = Environment.GetEnvironmentVariable("LISTENER_IP") ?? ServerConfiguration.IP;
+    public static String ListenerPort { get; set; } = Environment.GetEnvironmentVariable("LISTENER_PORT") ?? ServerConfiguration.Port.ToString();
+    public static String ServerPassword { get; set; } = Environment.GetEnvironmentVariable("SERVER_PASSWORD") ?? ServerConfiguration.Password;
+    public static String LaunchCustomGamemode { get; set; } = Environment.GetEnvironmentVariable("LAUNCH_CUSTOM_GAMEMODE") ?? ServerConfiguration.LaunchCustomGamemode;
     public static List<string> MapRotation { get; set; } = 
         (Environment.GetEnvironmentVariable("MAP_ROTATION")?.Split(',').ToList()) 
-        ?? MapHelper.GetAllMaps();
+        ?? ServerConfiguration.MapRotation;
     public static List<string> GamemodeRotation { get; set; } =
         (Environment.GetEnvironmentVariable("GAMEMODE_ROTATION")?.Split(',').ToList()) 
-        ?? GamemodeHelper.GetAllGamemodes();
+        ?? ServerConfiguration.GamemodeRotation;
     
     private static void Main()
     {
@@ -48,8 +50,9 @@ internal class Program
         try
         {
             Logger = SetupLogger();
+            LoadConfiguration();
+            ValidateConfiguration();
             StartServerListener();
-            ShutdownEvent.WaitOne();
         }
         catch (Exception ex)
         {
@@ -65,6 +68,22 @@ internal class Program
             
             // kill it with fire and dip out of here if we failed to initialize
             Environment.Exit(-1);
+        }
+
+        if (DisableConsoleCommands == "false")
+        {
+            try
+            {
+                StartCommandHandler();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($"Command handler error: {Environment.NewLine}{ex}");
+            }
+        }
+        else
+        {
+            ShutdownEvent.WaitOne();
         }
     } 
 
@@ -124,7 +143,97 @@ internal class Program
             throw;
         }
     }
+
+    private static void LoadConfiguration()
+    {
+        if (!File.Exists("appsettings.json"))
+        {
+            File.WriteAllText("appsettings.json", JsonSerializer.Serialize(ServerConfiguration, JsonOptions));
+        }
+
+        new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json", false, true)
+            .Build()
+            .Bind(ServerConfiguration);
+    }
     
+    public static void SaveConfiguration(Configuration.ServerConfiguration serverConfigurationToSave)
+    {
+        File.WriteAllText("appsettings.json", JsonSerializer.Serialize(serverConfigurationToSave, JsonOptions));
+    }
+    
+    public static void ReloadConfiguration()
+    {
+        foreach (var map in Server.MapRotation.GetMapRotation())
+        {
+            Server.MapRotation.RemoveFromRotation(map);
+        }
+        
+        foreach (var gamemode in Server.GamemodeRotation.GetGamemodeRotation())
+        {
+            Server.GamemodeRotation.RemoveFromRotation(gamemode);
+        }
+
+        if (!ServerConfiguration.MapRotation.Any())
+        {
+            ServerConfiguration.MapRotation.Add("AZAGOR");
+            SaveConfiguration(ServerConfiguration);
+        }
+        
+        if (!ServerConfiguration.GamemodeRotation.Any())
+        {
+            ServerConfiguration.GamemodeRotation.Add("CONQ");
+            SaveConfiguration(ServerConfiguration);
+        }
+        
+        foreach (var map in ServerConfiguration.MapRotation)
+        {
+            Server.MapRotation.AddToRotation(map);
+        }
+        
+        foreach (var gamemode in ServerConfiguration.GamemodeRotation)
+        {
+            Server.GamemodeRotation.AddToRotation(gamemode);
+        }
+        
+        new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json", false, true)
+            .Build()
+            .Bind(ServerConfiguration);
+    }
+
+    private static void ValidateConfiguration()
+    {
+        List<ValidationResult> validationResults = new();
+        IPAddress? ipAddress = null;
+
+        var isValid = Validator.TryValidateObject(ServerConfiguration, new ValidationContext(ServerConfiguration), validationResults, true)
+                      && IPAddress.TryParse(ServerConfiguration.IP, out ipAddress);
+        
+        if (ServerConfiguration.Password == "")
+        {
+            Logger.Warn("No password set, server will be public.");
+        }
+
+        if (!isValid || ipAddress == null)
+        {
+            var errorMessages = validationResults.Select(x => x.ErrorMessage);
+            if (ipAddress == null)
+            {
+                errorMessages = errorMessages.Append($"Invalid IP address: {ServerConfiguration.IP}");
+            }
+
+            var errorString = $"Invalid configuration:{Environment.NewLine}{string.Join(Environment.NewLine, errorMessages)}";
+            throw new ValidationException(errorString);
+        }
+        
+        Logger.Info("Configuration is valid.");
+
+        ServerConfiguration.IPAddress = ipAddress;
+    }
+
     private void StartServerListener()
     {
         Logger.Info("Starting server listener...");
@@ -134,7 +243,7 @@ internal class Program
         listener.OnCreatingGameServerInstance += InitializeServer;
         listener.OnGameServerDisconnected = OnGameServerDisconnected;
         listener.OnGameServerConnected = OnGameServerConnected;
-        listener.LogLevel = LogLevel.Players | LogLevel.GameServers | LogLevel.GameServerErrors | LogLevel.Sockets;
+        listener.LogLevel = ServerConfiguration.LogLevel;
         listener.OnLog += OnLog;
         listener.Start(int.Parse(ListenerPort));
 

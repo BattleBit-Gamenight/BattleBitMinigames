@@ -12,7 +12,6 @@ public class SwapRandomGamemode : Event
     {
         var killer = args.Killer;
         var victim = args.Victim;
-        var checks = 0;
 
         if (killer == null || killer == victim || !killer.IsAlive)
             return;
@@ -23,6 +22,7 @@ public class SwapRandomGamemode : Event
         await Task.Delay(10);
         SetPlayerLoadout(killer, victim.CurrentLoadout);
 
+        var checks = 0;
         while (Vector3.Distance(killer.Position, newPosition) > 3 && checks < 15)
         {
             checks++;
@@ -48,8 +48,8 @@ public class SwapRandomGamemode : Event
         {
             case GameState.Playing:
                 Server.RoundSettings.SecondsLeft = 100000;
-                Server.RoundSettings.TeamATickets = 450;
-                Server.RoundSettings.TeamBTickets = 450;
+                Server.RoundSettings.TeamATickets = 600;
+                Server.RoundSettings.TeamBTickets = 600;
                 break;
             case GameState.CountingDown:
                 Server.RoundSettings.SecondsLeft = 10;

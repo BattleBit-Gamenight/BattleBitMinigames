@@ -49,6 +49,8 @@ public class GamemodeRotation : ChatCommand
                             return;
                         }
 
+                        Program.ServerConfiguration.GamemodeRotation.Add(gamemodeToAdd);
+                        Program.SaveConfiguration(Program.ServerConfiguration);
                         player.Message(
                             $"Added {RichTextHelper.Bold(true)}{RichTextHelper.FromColorName("Gold")}{gamemodeToAdd}{RichTextHelper.Color()}{RichTextHelper.Bold(false)} to the rotation.");
                         Program.Logger.Info($"Added {gamemodeToAdd} to the rotation.");
@@ -76,6 +78,8 @@ public class GamemodeRotation : ChatCommand
                             return;
                         }
 
+                        Program.ServerConfiguration.GamemodeRotation.Remove(gamemodeToRemove);
+                        Program.SaveConfiguration(Program.ServerConfiguration);
                         player.Message(
                             $"Removed {RichTextHelper.Bold(true)}{RichTextHelper.FromColorName("Gold")}{gamemodeToRemove}{RichTextHelper.Color()}{RichTextHelper.Bold(false)} from the rotation.");
                         Program.Logger.Info($"Removed {gamemodeToRemove} from the rotation.");

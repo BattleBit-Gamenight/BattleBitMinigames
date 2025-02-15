@@ -11,7 +11,9 @@ public class ChatCommandList
     {
         new PlayerDebug(),
         new TeleportCommand(),
-        new StopServerAndApi()
+        new StopServerAndApi(),
+        new ServerSizeCommand(),
+        new ServerPasswordCommand()
     };
 
     public static List<ChatCommand> ModeratorCommands { get; } = new()
