@@ -98,6 +98,7 @@ public class MapRotation : ChatCommand
                     break;
                 case "rl":
                 case "reload":
+                    Program.ReloadConfiguration();
                     player.Message("Reloaded map rotation.");
                     Program.Logger.Info("Reloaded map rotation.");
                     break;

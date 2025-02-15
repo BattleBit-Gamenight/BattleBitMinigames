@@ -27,6 +27,16 @@ public class ServerSettings : Event
             Server.GamemodeRotation.AddToRotation(gamemode);
         }
         
+        if (!Server.MapRotation.GetMapRotation().Any())
+        {
+            Program.ReloadConfiguration();
+        }
+
+        if (!Server.GamemodeRotation.GetGamemodeRotation().Any())
+        {
+            Program.ReloadConfiguration();
+        }
+        
         Server.ExecuteCommand("setspeedhackdetection false");
         Server.ExecuteCommand("setmaxping 999");
 
