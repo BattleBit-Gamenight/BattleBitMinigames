@@ -38,12 +38,10 @@ public class CustomGamemodeHelper
                     break;
                 case "vip":
                     server.AddEvents(CustomGameModeEvents.VipEvents);
-                    server.SetServerSizeForNextMatch(MapSize._127vs127);
                     server.ForceEndGame();
                     break;
                 case "hideandseek":
                     server.AddEvents(CustomGameModeEvents.HideAndSeekEvents);
-                    server.SetServerSizeForNextMatch(MapSize._127vs127);
                     server.ForceEndGame();
                     break;
                 case "gungame":
@@ -52,17 +50,14 @@ public class CustomGamemodeHelper
                     break;
                 case "swap":
                     server.AddEvents(CustomGameModeEvents.SwapEvents);
-                    server.SetServerSizeForNextMatch(MapSize._16vs16);
                     server.ForceEndGame();
                     break;
                 case "swaprandom":
                     server.AddEvents(CustomGameModeEvents.SwapRandomEvents);
-                    server.SetServerSizeForNextMatch(MapSize._16vs16);
                     server.ForceEndGame();
                     break;
                 case "none":
                     server.ResetEvents();
-                    server.SetServerSizeForNextMatch(MapSize._8v8);
                     break;
                 default:
                     return;
