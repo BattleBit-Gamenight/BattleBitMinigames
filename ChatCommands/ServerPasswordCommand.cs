@@ -23,7 +23,8 @@ public class ServerPasswordCommand : ChatCommand
             
             if (args.Length < 1)
             {
-                player.Message($"Invalid arguments. Usage: {Usage}");
+                Server.ExecuteCommand("setpass");
+                player.SayToChat("Server password removed");
                 return;
             }
 
